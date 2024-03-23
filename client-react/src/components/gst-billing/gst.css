@@ -1,0 +1,379 @@
+.printGST_container {
+    width: 100%;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    background-color: var(--background-primary);
+    font-family: Arial, sans-serif;
+}
+
+.bill_header_segment {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+
+.bill_header_segment .segment_left .bill_heading {
+    color: #088f8f;
+    padding: 0 0 1rem 0;
+}
+
+.bill_heading_text::first-letter {
+    font-size: 150%;
+    line-height: 1;
+}
+
+.bill_header_segment .segment_left .bill_address h2 {
+    display: block;
+    font-size: 1.5rem;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    color: #088f8f;
+    padding: 0 0 0 0;
+
+}
+
+.bill_header_segment .segment_left .bill_address p {
+    background-color: #e6e6e6;
+    margin: 0;
+    padding: 8px 0 0 8px;
+}
+
+.bill_invoiceTo {
+    margin: 1.5rem 0 0 0;
+    background-color: #e6e6e6;
+    padding: 0 0 0 8px;
+
+}
+
+.bill_invoiceTo .select-name {
+    display: flex;
+    gap: 0;
+    flex-direction: column;
+}
+
+.select-name h4,
+.select-name select,
+.client-detail {
+    margin: 0;
+    padding: 0;
+}
+
+.select-name {
+    width: 60%;
+}
+
+.select-name select option:checked {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.logo-img img {
+    width: 220px;
+    height: 90px
+}
+
+.date-field {
+    margin-top: 2.7rem;
+    display: flex;
+    align-items: left;
+    gap: 0;
+}
+
+.date-field-heading,
+.date-field-details {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 0;
+    padding: .4rem;
+    line-height: 1;
+    background-color: #088f8f;
+}
+
+.date-field-details {
+    background-color: #e6e6e6;
+    color: black;
+}
+
+.date-field-heading h5,
+.date-field-details h5,
+.select-name h4 {
+    margin: 0 0 .5rem 0 !important;
+    padding: 0 !important;
+}
+
+.select-name select {
+    margin: 0;
+    padding: 0 0 0 0;
+    border: 1px solid slateblue
+}
+
+.table_gst table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table_gst th,
+.table_gst td {
+    padding: 8px;
+    border: 1px solid black;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.table_gst th {
+    background-color: #088f8f;
+    color: white;
+}
+
+.table_gst td input {
+    width: 100%;
+}
+
+.two-detail .empty-cell {
+    visibility: hidden;
+    border-color: transparent;
+}
+
+.two-detail .visible-cell {
+    border-bottom-color: transparent;
+    font-weight: bold;
+}
+
+.two-detail .visible-cell-border {
+    font-weight: bold;
+}
+
+.print_remove {
+    white-space: nowrap;
+    width: 10%;
+}
+
+.table-print {
+    display: none;
+}
+
+.client-detail p {
+    margin: 0;
+}
+
+.btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.print-btn,
+.print-btn-disable {
+    padding: 10px;
+    color: white;
+    font-size: 1rem;
+    background-color: #088f8f;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.print-btn-disable {
+    background-color: red;
+}
+
+.print-btn-disable:hover {
+    cursor: not-allowed;
+}
+
+.thank-div {
+    padding: 1rem 0 0 0;
+    margin: auto;
+    width: 100%;
+    color: #088f8f;
+}
+
+.bank-details {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.bank-details .details {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.bank-details-elements {
+    display: flex;
+    flex-direction: row;
+}
+
+.bank-elements-title p {
+    font-weight: bold;
+    line-height: 1.25;
+}
+
+.bank-details-colon p {
+    line-height: 1.2;
+}
+
+.bank-details-data p {
+    line-height: 1.2;
+}
+
+.bank-details .details h2 {
+    width: 100%;
+    margin-left: 0;
+    padding: 0;
+    text-align: left;
+}
+
+.bank-details .details p {
+    margin: 3px;
+    padding: 0;
+}
+
+td input,
+td textarea {
+    font-size: 1rem;
+    width: 100%;
+}
+
+span {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.visible-cell-border input {
+    font-weight: bold;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.print-submit {
+    display: flex;
+    gap: 20px;
+    height: 40px;
+}
+
+.table_gst {
+    width: 100%;
+    table-layout: auto;
+}
+
+.table_gst th:nth-child(2),
+.table_gst td:nth-child(2) {
+    width: 30%;
+}
+
+@media only screen and (max-width: 600px) {
+
+    .table_gst th,
+    .table_gst td {
+        padding: 4px;
+    }
+
+    .print_remove {
+        display: none;
+    }
+}
+
+@media print {
+    .printGST_container {
+        border: none;
+
+    }
+
+    .select-name select {
+        display: none;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .print_remove,
+    button {
+        display: none;
+    }
+
+    .select-name::after {
+        content: attr(data-selected-option);
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .table_gst th {
+        background-color: transparent;
+        color: black;
+    }
+
+    .table-print {
+        display: block;
+    }
+
+    input,
+    textarea {
+        border: transparent;
+        text-align: center;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        border: none;
+        background-color: transparent;
+        width: auto;
+        padding: 0;
+        margin: 0;
+    }
+
+    .table_gst table {
+        width: auto;
+        table-layout: auto;
+    }
+
+    .table_gst th,
+    .table_gst td {
+        width: auto;
+        max-width: 100%;
+    }
+
+    .table_gst td:nth-child(2) {
+        width: 50%;
+    }
+
+    .table_inputs textarea,
+    .table_inputs input[name^="quantity"],
+    .table_inputs input[name^="unitPrice"] {
+        display: none;
+    }
+
+    .transparent-border {
+        border: 1px solid transparent !important;
+    }
+
+    .table_gst td {
+        white-space: normal;
+        word-wrap: break-word;
+        overflow: visible;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        -moz-print-color-adjust: exact;
+        -o-print-color-adjust: exact;
+        -ms-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        margin: 0;
+    }
+}

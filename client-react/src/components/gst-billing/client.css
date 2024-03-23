@@ -1,0 +1,7 @@
+.no-wrap {
+    white-space: nowrap;
+}
+
+.print-mode {
+    overflow: hidden;
+}

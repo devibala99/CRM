@@ -1,0 +1,52 @@
+.modal-container-edit {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fffefa;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.modal-container-edit form {
+    width: 100%;
+}
+
+.modal-container-edit h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.modal-container-edit form>div {
+    margin-bottom: 20px;
+}
+
+.modal-container-edit .form-group {
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 600px) {
+    .modal-container-edit {
+        padding: 10px;
+    }
+}
+
+.modal-container-edit input[type="file"] {
+    display: none;
+}
+
+.modal-container-edit label[for="studentImage"] {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.modal-container-edit label[for="studentImage"]:hover {
+    background-color: #e0e0e0;
+}

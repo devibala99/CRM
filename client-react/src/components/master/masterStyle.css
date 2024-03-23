@@ -1,0 +1,162 @@
+.form-group-master {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 1rem;
+    gap: 20px;
+}
+
+.first-input,
+.second-input,
+.third-input {
+    flex: 1;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fourth-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1.6rem;
+}
+
+.first-input label,
+.second-input label,
+.third-input label {
+    margin-bottom: .5rem;
+}
+
+.saveButton-master,
+.deleteButton-master,
+.editButton-master {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #bdbdbd;
+    border: none;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.editButton-master:hover {
+    background-color: #0090dd;
+}
+
+.saveButton-master:hover {
+    background-color: #4aae71;
+}
+
+.deleteButton-master:hover {
+    background-color: red;
+}
+
+.form-group-master input[type="text"] {
+    width: 100%;
+    flex: 1;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.form-group-master input[type="text"]:focus {
+    border-color: red;
+}
+
+.btn-class-master {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 2rem;
+}
+
+.btns-group {
+    background-color: #0090dd;
+    color: white;
+    font-size: 1rem;
+    width: 100px;
+    height: 40px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+
+/*! Modal Css Style*/
+.modalContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.warningImage {
+    width: 100px;
+    height: 100px;
+}
+
+.warningText {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.buttonsContainer {
+    display: flex;
+    padding-top: 2rem;
+    gap: 20px;
+}
+
+.deleteButton,
+.editButton-blue {
+    width: 80px;
+    border-radius: 20px;
+    color: white;
+    background-color: #ef4b6d;
+    border: none;
+    padding: 0.5rem;
+}
+
+.cancelButton,
+.cancelButton-blue {
+    width: 80px;
+    border-radius: 20px;
+    color: #ef4b6d;
+    border: 2px solid #ef4b6d;
+    background-color: #fff;
+    padding: 0.5rem;
+}
+
+/* Edit Modal Content*/
+.modalContent .input-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.input-container input {
+    width: 100%;
+    flex: 1;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 0;
+}
+
+.editButton-blue {
+    background-color: #0090dd;
+}
+
+.cancelButton-blue {
+    color: #0090dd;
+    border: 1px solid #0090dd;
+}

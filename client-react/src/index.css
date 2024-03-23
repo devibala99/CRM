@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+:root {
+    --background-primary: #FFFEFA;
+    --button-color: #2C67F2;
+    --white-color: #fafafb;
+    --background-color: #17171e;
+    --grey-color: #b5b5be;
+    --dark-grey-color: #292932;
+    --icon-color: #3c3c3ce2;
+}
+
+body {
+    margin: 0;
+    /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif; */
+    /* font-family: "Montserrat", sans-serif; */
+    font-family: "Nunito", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--background-primary);
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a7a7;
+}
+
+button {
+    cursor: pointer;
+}
+
+@media print {
+
+    .header-container,
+    .sidebar {
+        display: none !important;
+    }
+
+    ::-webkit-scrollbar {
+        display: none !important;
+
+    }
+}

@@ -1,0 +1,23 @@
+export const bankNames = [
+    { id: 1, bankName: "Axis Bank Ltd." },
+    { id: 2, bankName: "Bandhan Bank Ltd." },
+    { id: 3, bankName: "CSB Bank Ltd." },
+    { id: 4, bankName: "City Union Bank Ltd." },
+    { id: 5, bankName: "DCB Bank Ltd." },
+    { id: 6, bankName: "Dhanlaxmi Bank Ltd." },
+    { id: 7, bankName: "Federal Bank Ltd." },
+    { id: 8, bankName: "HDFC Bank Ltd." },
+    { id: 9, bankName: "ICICI Bank Ltd." },
+    { id: 10, bankName: "IndusInd Bank Ltd." },
+    { id: 11, bankName: "IDFC First Bank Ltd." },
+    { id: 12, bankName: "Jammu & Kashmir Bank Ltd." },
+    { id: 13, bankName: "Karnataka Bank Ltd." },
+    { id: 14, bankName: "Karur Vysya Bank Ltd." },
+    { id: 15, bankName: "Kotak Mahindra Bank Ltd." },
+    { id: 16, bankName: "Nainital Bank Ltd." },
+    { id: 17, bankName: "RBL Bank Ltd." },
+    { id: 18, bankName: "South Indian Bank Ltd." },
+    { id: 19, bankName: "Tamilnad Mercantile Bank Ltd." },
+    { id: 20, bankName: "YES Bank Ltd." },
+    { id: 21, bankName: "IDBI Bank Ltd." }
+];

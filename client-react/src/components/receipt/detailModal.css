@@ -1,0 +1,30 @@
+.view-modal-container h1 {
+    padding: 0 0 1rem 0;
+    color: #0090dd;
+}
+
+.modal-flex {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    gap: 30px;
+    padding: 1rem;
+}
+
+.left-container {
+    width: 50%;
+}
+
+.right-container {
+    width: 50%;
+}
+
+.left-container p {
+    font-weight: bold;
+}
+
+.right-container p {
+    font-weight: 400;
+    color: black;
+}

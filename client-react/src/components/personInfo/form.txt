@@ -1,0 +1,1342 @@
+const [personalDetails, setPersonalDetails] = useState({
+    studentId: `${currentStudentIdText}-${currentStudentIdNumber}`,
+    firstName: '',
+    lastName: '',
+    fatherName: '',
+    motherName: '',
+    dateOfBirth: '',
+    address: '',
+    contactNumber1: '',
+    contactNumber2: '',
+    emailId: '',
+    gender: '',
+    maritalStatus: '',
+});
+
+const [education, setEducation] = useState({
+    sslcPercentage: '',
+    qualification: '',
+    hscPercentage: '',
+    diplomaPercentage: '',
+    ugDegree: '',
+    pgDegree: '',
+    workExperience: '',
+    ugCollegeName: '',
+    pgCollegeName: '',
+    ugSpecialization: '',
+    pgSpecialization: '',
+    maxQualification: '',
+    ugCgpa: '',
+    pgCgpa: '',
+    ugYearOfPassing: '',
+    pgYearOfPassing: '',
+    phdYearOfPassing: '',
+});
+
+const [courseSelection, setCourseSelection] = useState({
+    course: '',
+    totalAmount: 30000,
+    paidAmount: '',
+    remainingAmount: '',
+    studentImage: null,
+    studentStatus: '',
+    comments: '',
+});
+ <div className="form-group">
+                        <label htmlFor="motherName">Mother's Name:</label>
+                        <input type="text" id="motherName" name="motherName" value={studentForm.motherName} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="dateOfBirth">Date of Birth:</label>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" value={studentForm.dateOfBirth} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="emailId">Email ID:</label>
+                        <input type="email" id="emailId" name="emailId" value={studentForm.emailId} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="address">Address:</label>
+                        <textarea id="address" name="address" value={studentForm.address} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="contactNumber1">Mobile Number:</label>
+                        <input type="tel" id="contactNumber1" name="contactNumber1" value={studentForm.contactNumber1} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="contactNumber2">Alternative Number:</label>
+                        <input type="tel" id="contactNumber2" name="contactNumber2" value={studentForm.contactNumber2} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label>Gender:</label>
+                        <div>
+                            <label><input type="radio" name="gender" value="male" onChange={handleInputChange} required /> Male</label>
+                            <label><input type="radio" name="gender" value="female" onChange={handleInputChange} /> Female</label>
+                            <label><input type="radio" name="gender" value="others" onChange={handleInputChange} /> Others</label>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label>Marital Status:</label>
+                        <div>
+                            <label><input type="radio" name="maritalStatus" value="Married" onChange={handleInputChange} required />Married</label>
+                            <label><input type="radio" name="maritalStatus" value="Un-Married" onChange={handleInputChange} />Un-Married</label>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="sslc">SSLC Percentage:</label>
+                        <input type="text" id="sslc" name="sslcPercentage" value={studentForm.sslcPercentage} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label>Qualification:</label>
+                        <div>
+                            <label><input type="radio" name="qualification" value="hsc" onChange={handleInputChange} required /> HSC</label>
+                            <label><input type="radio" name="qualification" value="diploma" onChange={handleInputChange} /> Diploma</label>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="maxQualification">Max Qualification:</label>
+                        <select id="maxQualification" name="maxQualification" value={studentForm.maxQualification} onChange={handleInputChange} required>
+                            <option value="">Select Qualification</option>
+                            <option value="SSLC">SSLC</option>
+                            <option value="HSC">HSC</option>
+                            <option value="Diploma">Diploma</option>
+                            <option value="UG">UG</option>
+                            <option value="PG">PG</option>
+                            <option value="PhD">PhD</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="qualification">Qualification:</label>
+                        <select id="qualification" name="qualification" value={studentForm.qualification} onChange={handleInputChange} required>
+                            <option value="">Select Qualification</option>
+                            <optgroup label="Option 1">
+                                <option value="SSLC, Diploma">SSLC, Diploma</option>
+                            </optgroup>
+                            <optgroup label="Option 2">
+                                <option value="SSLC, HSC">SSLC, HSC</option>
+                            </optgroup>
+                            <optgroup label="Option 3">
+                                <option value="SSLC, HSC, Diploma">SSLC, HSC, Diploma</option>
+                            </optgroup>
+                            <optgroup label="Option 4">
+                                <option value="SSLC, HSC, UG">SSLC,  HSC, UG</option>
+                            </optgroup>
+                            <optgroup label="Option 5">
+                                <option value="SSLC, Diploma, HSC, UG">SSLC, Diploma, HSC, UG</option>
+                            </optgroup>
+                            <optgroup label="Option 6">
+                                <option value="SSLC, HSC, UG, PG">SSLC, HSC, UG, PG</option>
+                            </optgroup>
+                            <optgroup label="Option 7">
+                                <option value="SSLC, Diploma, HSC, UG, PG">SSLC, Diploma, HSC, UG, PG</option>
+                            </optgroup>
+                            <optgroup label="Option 8">
+                                <option value="SSLC, HSC, UG, PG, PhD">SSLC, HSC, UG, PG, PhD</option>
+                            </optgroup>
+                            <optgroup label="Option 9">
+                                <option value="SSLC, HSC, Diploma, UG, PG, PhD">SSLC, HSC, Diploma, UG, PG, PhD</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="diplomaPercentage">Diploma Percentage:</label>
+                        <input type="text" id="hsc" name="diplomaPercentage" value={studentForm.diplomaPercentage} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="hsc">HSC Percentage:</label>
+                        <input type="text" id="hsc" name="hscPercentage" value={studentForm.hscPercentage} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label>UG Degree:</label>
+                        <div>
+                            <label><input type="radio" name="ugDegree" value="Yes" onChange={handleInputChange} required />Yes</label>
+                            <label><input type="radio" name="ugDegree" value="No" onChange={handleInputChange} />No</label>
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ugCollegeName">UG College Name:</label>
+                        <input type="text" id="ugCollegeName" name="ugCollegeName" value={studentForm.ugCollegeName} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label>UG Degree:</label>
+                        <div>
+                            <label><input type="radio" name="ugDegree" value="Yes" onChange={handleInputChange} required />Yes</label>
+                            <label><input type="radio" name="ugDegree" value="No" onChange={handleInputChange} />No</label>
+                        </div>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="ugSpecialization">UG Specialization:</label>
+                        <input type="text" id="branch" name="ugSpecialization" value={studentForm.ugSpecialization} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ugCgpa">UG CGPA:</label>
+                        <input type="text" id="ugCgpa" name="ugCgpa" value={studentForm.ugCgpa} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="pgCgpa">PG CGPA:</label>
+                        <input type="text" id="pgCgpa" name="pgCgpa" value={studentForm.pgCgpa} onChange={handleInputChange} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ugYearOfPassing">UG Year of Passing:</label>
+                        <select id="ugYearOfPassing" name="ugYearOfPassing" value={studentForm.ugYearOfPassing} onChange={handleInputChange}>
+                            <option value="">Select Year</option>
+                            {
+                                Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="pgYearOfPassing">PG Year of Passing:</label>
+                        <select id="pgYearOfPassing" name="pgYearOfPassing" value={studentForm.pgYearOfPassing} onChange={handleInputChange}>
+                            <option value="">Select Year</option>
+                            {
+                                Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))
+                            }
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="yearOfPassing">Year of Passing:</label>
+                        <select id="yearOfPassing" name="yearOfPassing" value={studentForm.yearOfPassing} onChange={handleInputChange} required>
+                            <option value="">Select Year</option>
+                            {Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+
+                    </div>
+                    <div className="form-group">
+                        <label>Total Amount:</label>
+                        <input type="number" value={studentForm.totalAmount} />
+                    </div>
+                    <div className="form-group">
+                        <label>Paid Amount:</label>
+                        <input type="number" name="paidAmount" value={studentForm.paidAmount} onChange={handleInputChange} required />
+                    </div>
+                    <div className="form-group">
+                        <label>Remaining Amount:</label>
+                        <input type="text" value={studentForm.remainingAmount} readOnly />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="studentImage">Upload Photo:</label>
+                        <input type="file" id="studentImage" name="studentImage" accept="image/*" onChange={handleImageChange} required />
+                    </div>
+
+                    
+    const [studentForm, setStudentForm] = useState({
+        studentId: `${currentStudentIdText}-${currentStudentIdNumber}`,
+        firstName: '',
+        lastName: '',
+        fatherName: '',
+        motherName: '',
+        dateOfBirth: '',
+        address: '',
+        contactNumber1: '',
+        contactNumber2: '',
+        emailId: '',
+        gender: '',
+        maritalStatus: '',
+        sslcPercentage: '',
+        qualification: '',
+        hscPercentage: '',
+        diplomaPercentage: '',
+        workExperience: '',
+        ugCollegeName: '',
+        ugSpecialization: '',
+        ugYearOfPassing: '',
+        ugCgpa: '',
+        pgCollegeName: '',
+        pgSpecialization: '',
+        pgCgpa: '',
+        pgYearOfPassing: '',
+        phdCollegeName: '',
+        phdCgpa: '',
+        phdSpecialization: '',
+        phdYearOfPassing: '',
+        course: '',
+        totalAmount: 30000,
+        paidAmount: '',
+        remainingAmount: '',
+        studentImage: null,
+        studentType: '',
+        comments: '',
+    });
+
+    // Pre-save hook to convert the date string to a valid Date object
+// studentSchema.pre('save', function (next) {
+//     if (this.dateOfBirth && typeof this.dateOfBirth === 'string' && /^\d{2}-\d{2}-\d{4}$/.test(this.dateOfBirth)) {
+//         const [day, month, year] = this.dateOfBirth.split('-').map(Number);
+//         const date = new Date(year, month - 1, day);
+//         this.dateOfBirth = date;
+//     }
+
+//     next();
+// });
+// import React, { useState, useEffect } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+// import { showStudents, deleteStudent } from '../features/studentsSlice';
+// import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Tooltip } from '@mui/material';
+// import Pagination from '@mui/material/Pagination';
+// import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
+// import AddCircleIcon from '@mui/icons-material/AddCircle';
+// import "./viewTable.css"
+// import { Link } from 'react-router-dom';
+// import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+// import VisibilityIcon from '@mui/icons-material/Visibility';
+// import EditStudentModal from './EditStudentModal';
+// import { styled } from '@mui/system';
+// import DisplayStudentModal from './DisplayStudentModal';
+// import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+// import AddIcon from '@mui/icons-material/Add';
+// const StyledTableHead = styled(TableHead)({
+//     backgroundColor: '#2196f3',
+// });
+// const StyledTableCell = styled(TableCell)({
+//     color: 'white',
+//     fontWeight: 'bold',
+//     fontSize: "1rem",
+// });
+
+// const ViewStudent = () => {
+//     const [searchTerm, setSearchTerm] = useState('');
+//     const [filteredStudents, setFilteredStudents] = useState([]);
+//     const [selectedStudent, setSelectedStudent] = useState(null);
+//     const [displayModalOpen, setDisplayModalOpen] = useState(false);
+//     const [modalOpen, setModalOpen] = useState(false);
+//     const [page, setPage] = useState(1);
+
+//     const students = useSelector(state => state.students.entries);
+
+//     const dispatch = useDispatch();
+
+//     // Pagination
+//     const studentsPerPage = 5;
+//     const indexOfLastStudent = page * studentsPerPage;
+//     const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+//     const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+
+//     useEffect(() => {
+//         dispatch(showStudents());
+//     }, [dispatch]);
+
+//     useEffect(() => {
+//         // Filter students based on search term
+//         const filtered = students.filter(student =>
+//             student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//             student.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+//         );
+//         setFilteredStudents(filtered);
+//     }, [students, searchTerm]);
+
+//     console.log(currentStudents);
+//     const handleDelete = (id) => {
+//         const updatedFilteredStudents = filteredStudents.filter(item => item.id !== id);
+//         setFilteredStudents(updatedFilteredStudents);
+//         dispatch(deleteStudent(id));
+
+//     };
+//     const dateFormation = (dateString) => {
+//         const date = new Date(dateString);
+//         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+//         return date.toLocaleDateString('en-GB', options);
+//     }
+
+//     const handleEdit = (student) => {
+
+//         setSelectedStudent(student);
+//         setModalOpen(true);
+//         window.scrollTo({
+//             top: 0,
+//             behavior: 'smooth'
+//         });
+
+//     };
+
+//     const handleCloseModal = () => {
+//         setModalOpen(false);
+//     };
+
+//     const handleSearch = (e) => {
+//         setSearchTerm(e.target.value);
+//     };
+
+//     const handlePageChange = (event, value) => {
+//         setPage(value);
+//     };
+
+//     const handleDisplayModalOpen = (student) => {
+//         setSelectedStudent(student);
+//         setDisplayModalOpen(true);
+//         console.log(student, "clicked");
+//     };
+
+//     const handleDisplayModalClose = () => {
+//         setDisplayModalOpen(false);
+//     };
+
+//     return (
+//         <div className='student-view-container'>
+
+//             <div className="bread-crumb">
+//                 <div className="link-view" style={{ border: "1px solid #2196f3", padding: "5px", backgroundColor: "#2196f3", borderRadius: '5px' }}>
+//                     <Link to="/home/new-student/:studentId" className="custom-link" style={{ fontSize: "1.1rem", textAlign: "center", color: "white" }}> Add Student</Link>&nbsp;
+//                     <AddCircleIcon style={{ fontSize: "2rem", color: "white" }} />
+//                 </div>
+//                 <h1>Manage Students</h1>
+//                 <SidebarBreadcrumbs />
+//             </div>
+//             {
+//                 modalOpen && (
+//                     <EditStudentModal
+//                         selectedStudent={selectedStudent}
+//                         modalOpen={modalOpen}
+//                         onClose={handleCloseModal}
+//                     />
+//                 )
+//             }
+//             <input
+//                 placeholder="Search"
+//                 variant="outlined"
+//                 value={searchTerm}
+//                 onChange={handleSearch}
+//                 style={{ padding: "12px", fontSize: "1rem", border: "1px solid rgba(159, 159, 159, 0.497)" }}
+//             />
+//             <div className="table-container">
+//                 <TableContainer component={Paper}>
+//                     <Table>
+//                         <StyledTableHead>
+//                             <TableRow>
+//                                 <StyledTableCell>First Name</StyledTableCell>
+//                                 <StyledTableCell>Last Name</StyledTableCell>
+//                                 <StyledTableCell>DOB</StyledTableCell>
+//                                 <StyledTableCell>Email</StyledTableCell>
+//                                 <StyledTableCell>Contact</StyledTableCell>
+//                                 <StyledTableCell>Gender</StyledTableCell>
+//                                 <StyledTableCell>Bill Due</StyledTableCell>
+//                                 <StyledTableCell align="center">Actions</StyledTableCell>
+//                             </TableRow>
+//                         </StyledTableHead>
+//                         <TableBody>
+//                             {currentStudents.map((student) => (
+//                                 <TableRow key={student.id}>
+//                                     <TableCell>{student.firstName}</TableCell>
+//                                     <TableCell>{student.lastName}</TableCell>
+//                                     <TableCell>{dateFormation(student.dateOfBirth)}</TableCell>
+//                                     <TableCell>{student.emailId}</TableCell>
+//                                     <TableCell>{student.contactNumber1}</TableCell>
+//                                     <TableCell>{student.gender}</TableCell>
+//                                     <TableCell>{student.remainingAmount}</TableCell>
+//                                     <TableCell>
+//                                         <Tooltip title="Edit">
+//                                             <Button onClick={() => handleEdit(student)}>
+//                                                 <EditIcon />
+//                                             </Button>
+//                                         </Tooltip>
+//                                         <Tooltip title="Delete">
+//                                             <Button onClick={() => handleDelete(student.id)}>
+//                                                 <DeleteIcon />
+//                                             </Button>
+//                                         </Tooltip>
+//                                         <Tooltip title="Display Student">
+//                                             <Button onClick={() => handleDisplayModalOpen(student)}>
+//                                                 <VisibilityIcon />
+//                                             </Button>
+//                                         </Tooltip>
+//                                         <Tooltip title="Convert To Employee">
+//                                             <Button>
+//                                                 <AddCircleIcon />
+//                                             </Button>
+//                                         </Tooltip>
+
+//                                     </TableCell>
+//                                 </TableRow>
+//                             ))}
+//                         </TableBody>
+//                     </Table>
+//                 </TableContainer>
+//             </div>
+//             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+//                 <Pagination count={Math.ceil(filteredStudents.length / studentsPerPage)} page={page} onChange={handlePageChange} />
+//             </div>
+
+//             {selectedStudent && (
+//                 <DisplayStudentModal
+//                     displayModalOpen={displayModalOpen}
+//                     selectedStudent={selectedStudent}
+//                     onClose={handleDisplayModalClose}
+//                 />
+//             )}
+//         </div>
+//     );
+// };
+
+// export default ViewStudent;
+
+
+// import React, { useState, useEffect } from 'react';
+// import { useDispatch } from "react-redux";
+// import { updateStudent } from '../features/studentsSlice';
+// import { useForm } from 'react-hook-form';
+// import { Modal, RadioGroup, FormControl, FormControlLabel, Radio, FormLabel, Typography } from '@mui/material';
+// import "./addStudent.css"
+// import "./displayStudent.css"
+
+// const EditStudentModal = ({ selectedStudent, modalOpen, onClose }) => {
+//     const { register, handleSubmit, setValue, formState: { errors } } = useForm();
+//     const dispatch = useDispatch();
+//     const [editedStudentForm, setEditedStudentForm] = useState(selectedStudent);
+//     const [courseFees, setCourseFees] = useState(0);
+//     const [file, setFile] = useState(null);
+//     useEffect(() => {
+//         setEditedStudentForm(selectedStudent);
+//     }, [selectedStudent]);
+//     console.log(modalOpen);
+//     console.log(editedStudentForm, "se");
+//     console.log(selectedStudent, "EditedStudent")
+//     const handleClose = () => {
+//         onClose();
+//     };
+//     const handlePaidAmountChange = (e) => {
+//         const remainingAmount = courseFees - parseFloat(e.target.value);
+//         setValue('remainingAmount', remainingAmount);
+//     };
+//     const [selectedFileName, setSelectedFileName] = useState('');
+//     const handleFileChange = (e) => {
+//         const selectedFile = e.target.files[0];
+//         setSelectedFileName(selectedFile ? selectedFile.name : '')
+//         const handleCourseFees = (e) => {
+//             const course = e.target.value;
+//             const fees = course === "Full Stack Development" ? localStorage.getItem("fsdFees") : localStorage.getItem("mobileAppDevelopmentFees");
+//             setCourseFees(fees);
+//         }
+//         const handleChange = (event) => {
+//             const { name, value } = event.target;
+//             setEditedStudentForm(prevState => ({
+//                 ...prevState,
+//                 [name]: value
+//             }));
+//         };
+//         const onSubmit = (data) => {
+//             console.log("Data", data)
+//             const { _id, ...updatedData } = editedStudentForm;
+//             dispatch(updateStudent({ id: _id, data: updatedData }));
+//             handleClose();
+//         };
+
+
+//         return (
+//             <div className="modal-container">
+//                 <Typography variant="h5" className='heading'>Update Student</Typography>
+//                 <form onSubmit={handleSubmit(onSubmit)}>
+//                     <div className="form-group">
+//                         <label htmlFor="studentId">Student Id:</label>
+//                         <input type="text" id="studentId" name="studentId" value={editedStudentForm.studentId} {...register("studentId")} />
+//                         {errors.studentId && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="firstName">First Name:</label>
+//                         <input type="text" id="firstName" name="firstName" {...register("firstName")} value={editedStudentForm.firstName} />
+//                         {errors.firstName && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="lastName">Last Name:</label>
+//                         <input type="text" id="lastName" name="lastName" {...register("lastName")} value={editedStudentForm.lastName} />
+//                         {errors.lastName && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="fatherName">Father Name:</label>
+//                         <input type="text" id="fatherName" name="fatherName" {...register("fatherName")} value={editedStudentForm.firstName} />
+//                         {errors.lastName && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="motherName">Mother Name:</label>
+//                         <input type="text" id="motherName" name="motherName" {...register("motherName")} value={editedStudentForm.motherName} />
+//                         {errors.motherName && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="dateOfBirth">Date Of Birth:</label>
+//                         <input type="date" id="dateOfBirth" name="dateOfBirth" {...register("dateOfBirth", { required: true })} value={editedStudentForm.dateOfBirth} />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="emailId">Email Id:</label>
+//                         <input
+//                             type="email"
+//                             id="emailId"
+//                             name="emailId" value={editedStudentForm.emailId}
+//                             {...register("emailId", { required: true })}
+//                         />
+//                         {errors.emailId && <span>This field is required and should be a valid email address</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="address">Address:</label>
+//                         <textarea name="address" id="address" {...register("address")} value={editedStudentForm.address} />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="contactNumber1">Contact Number:</label>
+//                         <input
+//                             type="tel"
+//                             id="contactNumber1"
+//                             name="contactNumber1"
+//                             pattern="[0-9]{10}" value={editedStudentForm.contactNumber1}
+//                             {...register("contactNumber1", { required: true })}
+//                         />
+//                         {errors.contactNumber1 && <span>This field is required and should contain 10 digits</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="contactNumber2">Alternate Number:</label>
+//                         <input
+//                             type="tel"
+//                             id="contactNumber2"
+//                             name="contactNumber2"
+//                             pattern="[0-9]{10}" value={editedStudentForm.contactNumber2}
+//                             {...register("contactNumber2")}
+//                         />
+//                         {errors.contactNumber2 && <span>This field is required and should contain 10 digits</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label>Gender:</label>
+//                         <RadioGroup
+//                             aria-label="gender"
+//                             name="gender"
+//                             value={editedStudentForm.gender}
+//                             onChange={handleChange}
+//                         >
+//                             <FormControlLabel value="male" control={<Radio />} label="Male" />
+//                             <FormControlLabel value="female" control={<Radio />} label="Female" />
+//                         </RadioGroup>
+//                         {errors.gender && <span>Please select a gender</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <FormControl component="fieldset">
+//                             <FormLabel component="legend">Marital Status:</FormLabel>
+//                             <RadioGroup
+//                                 aria-label="maritalStatus"
+//                                 name="maritalStatus"
+//                                 value={editedStudentForm.maritalStatus}
+//                                 onChange={handleChange}
+//                             >
+//                                 <FormControlLabel value="Married" control={<Radio />} label="Married" />
+//                                 <FormControlLabel value="Un-Married" control={<Radio />} label="Un-Married" />
+//                             </RadioGroup>
+//                         </FormControl>
+//                         {errors.maritalStatus && <span>Please select marital status</span>}
+//                     </div>
+
+//                     <div className="form-group">
+//                         <label htmlFor="sslcPercentage">SSLC Percentage:</label>
+//                         <input
+//                             type="text"
+//                             id="sslcPercentage"
+//                             name="sslcPercentage" value={editedStudentForm.sslcPercentage} onChange={handleChange}
+
+//                             {...register("sslcPercentage", { required: true })}
+//                         />
+//                         {errors.sslcPercentage && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="qualification">Qualification:</label>
+//                         <select
+//                             id="qualification"
+//                             name="qualification" value={editedStudentForm.qualification}
+//                             onChange={handleChange}
+//                             {...register('qualification', { required: true })}
+//                         >
+//                             <option value="">Select Qualification</option>
+//                             <option value="SSLC">SSLC</option>
+//                             <option value="SSLC, HSC">SSLC, HSC</option>
+//                             <option value="SSLC, Diploma, HSC">SSL, Diploma, HSC</option>
+//                             <option value="SSLC, HSC, Diploma">SSLC, HSC, Diploma</option>
+//                             <option value="SSLC, HSC, UG">SSLC, HSC, UG</option>
+//                             <option value="SSLC, Diploma, HSC, UG">SSLC, Diploma, HSC, UG</option>
+//                             <option value="SSLC, HSC, UG, PG">SSLC, HSC, UG, PG</option>
+//                             <option value="SSLC, Diploma, HSC, UG, PG">SSLC, Diploma, HSC, UG, PG</option>
+//                             <option value="SSLC, HSC, UG, PG, PhD">SSLC, HSC, UG, PG, PhD</option>
+//                             <option value="SSLC, HSC, Diploma, UG, PG, PhD">SSLC, HSC, Diploma, UG, PG, PhD</option>
+//                         </select>
+//                         {errors.qualification && <span>This field is required</span>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="hscPercentage">HSC Percentage:</label>
+//                         <input
+//                             type="text"
+//                             id="hscPercentage"
+//                             name="hscPercentage" value={editedStudentForm.hscPercentage}
+//                             onChange={handleChange}
+//                             {...register('hscPercentage')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="diplomaPercentage">Diploma Percentage:</label>
+//                         <input
+//                             type="text"
+//                             id="diplomaPercentage"
+//                             name="diplomaPercentage" value={editedStudentForm.diplomaPercentage}
+//                             onChange={handleChange}
+//                             {...register('diplomaPercentage')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="ugCollegeName">UG College Name:</label>
+//                         <input
+//                             type="text"
+//                             id="ugCollegeName"
+//                             name="ugCollegeName" value={editedStudentForm.ugCollegeName}
+//                             onChange={handleChange}
+//                             {...register('ugCollegeName')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="ugSpecialization">UG Specialization:</label>
+//                         <input
+//                             type="text"
+//                             id="ugSpecialization"
+//                             name="ugSpecialization" value={editedStudentForm.ugSpecialization}
+//                             onChange={handleChange}
+//                             {...register('ugSpecialization')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="ugCgpa">UG CGPA:</label>
+//                         <input
+//                             type="text"
+//                             id="ugCgpa"
+//                             name="ugCgpa" value={editedStudentForm.ugCgpa}
+//                             onChange={handleChange}
+//                             {...register('ugCgpa')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="ugYearOfPassing">UG Year of Passing:</label>
+//                         <select
+//                             id="ugYearOfPassing"
+//                             name="ugYearOfPassing" value={editedStudentForm.ugYearOfPassing}
+//                             onChange={handleChange}
+//                             {...register('ugYearOfPassing')}
+//                         >
+//                             <option value="">Select Year</option>
+//                             {Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+//                                 <option key={year} value={year}>{year}</option>
+//                             ))}
+//                         </select>
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="pgCollegeName">PG College Name:</label>
+//                         <input
+//                             type="text"
+//                             id="pgCollegeName"
+//                             name="pgCollegeName" value={editedStudentForm.pgCollegeName}
+//                             onChange={handleChange}
+//                             {...register('pgCollegeName')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="pgSpecialization">PG Specialization:</label>
+//                         <input
+//                             type="text"
+//                             id="pgSpecialization"
+//                             name="pgSpecialization" value={editedStudentForm.pgSpecialization}
+//                             onChange={handleChange}
+//                             {...register('pgSpecialization')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="pgCgpa">PG CGPA:</label>
+//                         <input
+//                             type="text"
+//                             id="pgCgpa"
+//                             name="pgCgpa" value={editedStudentForm.pgCgpa}
+//                             onChange={handleChange}
+//                             {...register('pgCgpa')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="pgYearOfPassing">PG Year of Passing:</label>
+//                         <select
+//                             id="pgYearOfPassing"
+//                             name="pgYearOfPassing" value={editedStudentForm.pgYearOfPassing}
+//                             onChange={handleChange}
+//                             {...register('pgYearOfPassing')}
+//                         >
+//                             <option value="">Select Year</option>
+//                             {Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+//                                 <option key={year} value={year}>{year}</option>
+//                             ))}
+//                         </select>
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="phdCollegeName">PhD College Name:</label>
+//                         <input
+//                             type="text"
+//                             id="phdCollegeName"
+//                             name="phdCollegeName" value={editedStudentForm.phdCollegeName}
+//                             onChange={handleChange}
+//                             {...register('phdCollegeName')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="phdSpecialization">PhD Specialization:</label>
+//                         <input
+//                             type="text"
+//                             id="phdSpecialization"
+//                             name="phdSpecialization" value={editedStudentForm.phdSpecialization}
+//                             onChange={handleChange}
+//                             {...register('phdSpecialization')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="phdCgpa">PhD CGPA:</label>
+//                         <input
+//                             type="text"
+//                             id="phDCgpa"
+//                             name="phDCgpa" value={editedStudentForm.phdCgpa}
+//                             onChange={handleChange}
+//                             {...register('phDCgpa')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="phdYearOfPassing">PhD Year of Passing:</label>
+//                         <input
+//                             type="text"
+//                             id="phdYearOfPassing"
+//                             name="phdYearOfPassing" value={editedStudentForm.phdYearOfPassing}
+//                             onChange={handleChange}
+//                             {...register('phdYearOfPassing')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="workExperience">Work Experience:</label>
+//                         <input
+//                             type="text"
+//                             id="workExperience"
+//                             name="workExperience" value={editedStudentForm.workExperience}
+//                             onChange={handleChange}
+//                             {...register('workExperience')}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="course">Course:</label>
+//                         <select id="course" name="course" {...register('course')} onChange={(e) => handleCourseFees(e)} value={editedStudentForm.course}
+//                         >
+//                             <option value="">Select Course</option>
+//                             <option value="Full Stack Development">Full Stack Development</option>
+//                             <option value="Mobile App Development">Mobile App Development</option>
+//                         </select>
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="totalAmount">Total Amount:</label>
+//                         <input
+//                             type="number"
+//                             id="totalAmount"
+//                             name="totalAmount"
+//                             {...register('totalAmount')}
+//                             value={editedStudentForm.courseFees}
+//                             onChange={handleChange}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="paidAmount">Paid Amount:</label>
+//                         <input type="number" id="paidAmount" name="paidAmount" {...register('paidAmount')} value={editedStudentForm.paidAmount}
+//                             onChange={handleChange}
+//                         />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="remainingAmount">Remaining Amount:</label>
+//                         <input type="number" {...register('remainingAmount')} value={editedStudentForm.remainingAmount}
+//                             onChange={handleChange} />
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="studentType">Student Type:</label>
+//                         <select id="studentType" name="studentType" {...register('studentType')} value={editedStudentForm.studentType}
+//                             onChange={handleChange}>
+//                             <option value="current">Current Student</option>
+//                             <option value="old">Old Student</option>
+//                         </select>
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="studentImage">Student Image:</label>
+//                         <input
+//                             type="file"
+//                             id="studentImage"
+//                             name="studentImage"
+//                             accept=".jpg, .jpeg, .png"
+//                             onChange={handleFileChange}
+//                         />
+//                         {selectedFileName && <p>Selected File: {selectedFileName}</p>}
+//                     </div>
+//                     <div className="form-group">
+//                         <label htmlFor="comments">Comments:</label>
+//                         <textarea id="comments" name="comments" {...register('comments')} value={editedStudentForm.comments}
+//                             onChange={handleChange} />
+//                     </div>
+
+//                     <div className="full-width">
+//                         <div className="btn-submit">
+//                             <button type="submit">Submit</button>
+//                         </div>
+//                     </div>
+//                 </form>
+//             </div>
+
+//         );
+//     };
+// };
+// export default EditStudentModal;
+// // <Modal open={modalOpen} onClose={onClose} className="center-modal">
+// // </Modal>
+
+<form onSubmit={handleSubmit(onSubmit)} className='editable-form-grid'>
+                                <div className="form-group">
+                                    <label htmlFor="studentId">Student Id:</label>
+                                    <input type="text" id="studentId" name="studentId" value={editedStudent.studentId} onChange={handleChange} {...register("studentId")} />
+                                    {errors.studentId && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="firstName">First Name:</label>
+                                    <input type="text" id="firstName" name="firstName" {...register("firstName")} value={editedStudent.firstName} onChange={handleChange} />
+                                    {errors.firstName && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="lastName">Last Name:</label>
+                                    <input type="text" id="lastName" name="lastName" {...register("lastName")} value={editedStudent.lastName} onChange={handleChange} />
+                                    {errors.lastName && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="fatherName">Father Name:</label>
+                                    <input type="text" id="fatherName" name="fatherName" {...register("fatherName")} value={editedStudent.fatherName} onChange={handleChange} />
+                                    {errors.lastName && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="motherName">Mother Name:</label>
+                                    <input type="text" id="motherName" name="motherName" {...register("motherName")} value={editedStudent.motherName} onChange={handleChange} />
+                                    {errors.motherName && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="dateOfBirth">Date Of Birth:</label>
+                                    <input type="date" id="dateOfBirth" name="dateOfBirth" {...register("dateOfBirth")} value={editedStudent.dateOfBirth} onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="emailId">Email Id:</label>
+                                    <input
+                                        type="email"
+                                        id="emailId"
+                                        name="emailId"
+                                        value={editedStudent.emailId}
+                                        onChange={(e) => setEditedStudent({ ...editedStudent, emailId: e.target.value })}
+                                        {...register("emailId")}
+                                    />
+                                    {errors.emailId && <span>This field is required and should be a valid email address</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="address">Address:</label>
+                                    <textarea name="address" id="address" {...register("address")} onChange={handleChange} value={editedStudent.address} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="contactNumber1">Contact Number:</label>
+                                    <input
+                                        type="tel"
+                                        id="contactNumber1"
+                                        name="contactNumber1" onChange={handleChange}
+                                        pattern="[0-9]{10}" value={editedStudent.contactNumber1}
+                                        {...register("contactNumber1")}
+                                    />
+                                    {errors.contactNumber1 && <span>This field is required and should contain 10 digits</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="contactNumber2">Alternate Number:</label>
+                                    <input
+                                        type="tel"
+                                        id="contactNumber2"
+                                        name="contactNumber2" onChange={handleChange}
+                                        pattern="[0-9]{10}" value={editedStudent.contactNumber2}
+                                        {...register("contactNumber2")}
+                                    />
+                                    {errors.contactNumber2 && <span>This field is required and should contain 10 digits</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Gender:</label>
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            id="male"
+                                            name="gender"
+                                            value="male" onChange={handleChange}
+                                            checked={editedStudent.gender === "male"}
+                                            {...register("gender")}
+                                        />
+                                        <label htmlFor="male">Male</label>
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            id="female"
+                                            name="gender"
+                                            value="female" onChange={handleChange}
+                                            checked={editedStudent.gender === "female"}
+                                            {...register("gender")}
+                                        />
+                                        <label htmlFor="female">Female</label>
+                                    </div>
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            id="others"
+                                            name="gender"
+                                            value="others" onChange={handleChange}
+                                            checked={editedStudent.gender === "others"}
+                                            {...register("gender")}
+                                        />
+                                        <label htmlFor="others">Others</label>
+                                    </div>
+                                    {errors.gender && <span>Please select a gender</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Marital Status:</label>
+                                    <div>
+                                        <input type="radio" id="married" name="maritalStatus" value="Married"
+                                            checked={editedStudent.maritalStatus === 'Married'} onChange={handleChange}
+                                            {...register("maritalStatus", { required: true })} />
+                                        <label htmlFor="married">Married</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="unmarried" name="maritalStatus" value="Un-Married"
+                                            checked={editedStudent.maritalStatus === 'Un-Married'} onChange={handleChange}
+                                            {...register("maritalStatus", { required: true })} />
+                                        <label htmlFor="married">Un-Married</label>
+                                    </div>
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="sslcPercentage">SSLC Percentage:</label>
+                                    <input
+                                        type="text"
+                                        id="sslcPercentage"
+                                        name="sslcPercentage" value={editedStudent.sslcPercentage} onChange={handleChange}
+
+                                        {...register("sslcPercentage", { required: true })}
+                                    />
+                                    {errors.sslcPercentage && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="qualification">Qualification:</label>
+                                    <select
+                                        id="qualification"
+                                        name="qualification" value={editedStudent.qualification}
+                                        onChange={handleChange}
+                                        {...register('qualification', { required: true })}
+                                    >
+                                        <option value="">Select Qualification</option>
+                                        <option value="SSLC">SSLC</option>
+                                        <option value="SSLC, HSC">SSLC, HSC</option>
+                                        <option value="SSLC, Diploma, HSC">SSL, Diploma, HSC</option>
+                                        <option value="SSLC, HSC, Diploma">SSLC, HSC, Diploma</option>
+                                        <option value="SSLC, HSC, UG">SSLC, HSC, UG</option>
+                                        <option value="SSLC, Diploma, HSC, UG">SSLC, Diploma, HSC, UG</option>
+                                        <option value="SSLC, HSC, UG, PG">SSLC, HSC, UG, PG</option>
+                                        <option value="SSLC, Diploma, HSC, UG, PG">SSLC, Diploma, HSC, UG, PG</option>
+                                        <option value="SSLC, HSC, UG, PG, PhD">SSLC, HSC, UG, PG, PhD</option>
+                                        <option value="SSLC, HSC, Diploma, UG, PG, PhD">SSLC, HSC, Diploma, UG, PG, PhD</option>
+                                    </select>
+                                    {errors.qualification && <span>This field is required</span>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="hscPercentage">HSC Percentage:</label>
+                                    <input
+                                        type="text"
+                                        id="hscPercentage"
+                                        name="hscPercentage" value={editedStudent.hscPercentage}
+                                        onChange={handleChange}
+                                        {...register('hscPercentage')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="diplomaPercentage">Diploma Percentage:</label>
+                                    <input
+                                        type="text"
+                                        id="diplomaPercentage"
+                                        name="diplomaPercentage" value={editedStudent.diplomaPercentage}
+                                        onChange={handleChange}
+                                        {...register('diplomaPercentage')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="ugCollegeName">UG College Name:</label>
+                                    <input
+                                        type="text"
+                                        id="ugCollegeName"
+                                        name="ugCollegeName" value={editedStudent.ugCollegeName}
+                                        onChange={handleChange}
+                                        {...register('ugCollegeName')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="ugSpecialization">UG Specialization:</label>
+                                    <input
+                                        type="text"
+                                        id="ugSpecialization"
+                                        name="ugSpecialization" value={editedStudent.ugSpecialization}
+                                        onChange={handleChange}
+                                        {...register('ugSpecialization')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="ugCgpa">UG CGPA:</label>
+                                    <input
+                                        type="text"
+                                        id="ugCgpa"
+                                        name="ugCgpa" value={editedStudent.ugCgpa}
+                                        onChange={handleChange}
+                                        {...register('ugCgpa')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="ugYearOfPassing">UG Year of Passing:</label>
+                                    <select
+                                        id="ugYearOfPassing"
+                                        name="ugYearOfPassing" value={editedStudent.ugYearOfPassing}
+                                        onChange={handleChange}
+                                        {...register('ugYearOfPassing')}
+                                    >
+                                        <option value="">Select Year</option>
+                                        {Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+                                            <option key={year} value={year}>{year}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="pgCollegeName">PG College Name:</label>
+                                    <input
+                                        type="text"
+                                        id="pgCollegeName"
+                                        name="pgCollegeName" value={editedStudent.pgCollegeName}
+                                        onChange={handleChange}
+                                        {...register('pgCollegeName')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="pgSpecialization">PG Specialization:</label>
+                                    <input
+                                        type="text"
+                                        id="pgSpecialization"
+                                        name="pgSpecialization" value={editedStudent.pgSpecialization}
+                                        onChange={handleChange}
+                                        {...register('pgSpecialization')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="pgCgpa">PG CGPA:</label>
+                                    <input
+                                        type="text"
+                                        id="pgCgpa"
+                                        name="pgCgpa"
+                                        value={editedStudent.pgCgpa}
+                                        onChange={handleChange}
+                                        {...register('pgCgpa')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="pgYearOfPassing">PG Year of Passing:</label>
+                                    <select
+                                        id="pgYearOfPassing"
+                                        name="pgYearOfPassing" value={editedStudent.pgYearOfPassing}
+                                        onChange={handleChange}
+                                        {...register('pgYearOfPassing')}
+                                    >
+                                        <option value="">Select Year</option>
+                                        {Array.from({ length: 51 }, (_, i) => 2000 + i).map(year => (
+                                            <option key={year} value={year}>{year}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="phdCollegeName">PhD College Name:</label>
+                                    <input
+                                        type="text"
+                                        id="phdCollegeName"
+                                        name="phdCollegeName" value={editedStudent.phdCollegeName}
+                                        onChange={handleChange}
+                                        {...register('phdCollegeName')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="phdSpecialization">PhD Specialization:</label>
+                                    <input
+                                        type="text"
+                                        id="phdSpecialization"
+                                        name="phdSpecialization" value={editedStudent.phdSpecialization}
+                                        onChange={handleChange}
+                                        {...register('phdSpecialization')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="phdCgpa">PhD CGPA:</label>
+                                    <input
+                                        type="text"
+                                        id="phdCgpa"
+                                        name="phdCgpa"
+                                        value={editedStudent.phdCgpa}
+                                        onChange={handleChange}
+                                        onBlur={(e) => setValue('phdCgpa', e.target.value)}
+                                        {...register('phdCgpa')}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="phdYearOfPassing">PhD Year of Passing:</label>
+                                    <input
+                                        type="text"
+                                        id="phdYearOfPassing"
+                                        name="phdYearOfPassing" value={editedStudent.phdYearOfPassing}
+                                        onChange={handleChange}
+                                        {...register('phdYearOfPassing')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="workExperience">Work Experience:</label>
+                                    <input
+                                        type="text"
+                                        id="workExperience"
+                                        name="workExperience" value={editedStudent.workExperience}
+                                        onChange={handleChange}
+                                        {...register('workExperience')}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="course">Course:</label>
+                                    <select id="course" name="course" {...register('course')} onChange={(e) => handleCourseFees(e)} value={editedStudent.course}
+                                    >
+                                        <option value="">Select Course</option>
+                                        <option value="Full Stack Development">Full Stack Development</option>
+                                        <option value="Mobile App Development">Mobile App Development</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="totalAmount">Total Amount:</label>
+                                    <input
+                                        type="number"
+                                        id="totalAmount"
+                                        name="totalAmount"
+                                        {...register('totalAmount')}
+                                        value={editedStudent.totalAmount}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="paidAmount">Paid Amount:</label>
+                                    <input type="number" id="paidAmount" name="paidAmount" {...register('paidAmount')} value={editedStudent.paidAmount}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="remainingAmount">Remaining Amount:</label>
+                                    <input type="number" {...register('remainingAmount')} value={editedStudent.remainingAmount}
+                                        onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="studentType">Student Type:</label>
+                                    <select id="studentType" name="studentType" {...register('studentType')} value={editedStudent.studentType}
+                                        onChange={handleChange}>
+                                        <option value="current">Current Student</option>
+                                        <option value="old">Old Student</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="studentImage">Student Image:</label>
+                                    <input
+                                        type="file"
+                                        id="studentImage"
+                                        name="studentImage"
+                                        accept=".jpg, .jpeg, .png"
+                                        onChange={handleFileChange}
+                                    />
+                                    {selectedFileName && <p>Selected File: {selectedFileName}</p>}
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="comments">Comments:</label>
+                                    <textarea id="comments" name="comments" {...register('comments')} value={editedStudent.comments}
+                                        onChange={handleChange} />
+                                </div>
+                            </form>
+                            {editing ? (
+                        <Button onClick={handleSaveClick}>Save</Button>
+                    ) : (
+                        <Button onClick={handleEditClick}>Edit</Button>
+                    )}
+                       const handleEditClick = () => {
+        setEditing(true);
+    };
+
+    const handleSaveClick = () => {
+        setEditing(false);
+        console.log("object", editedStudent);
+        onUpdate({ id, data: editedStudent });
+        // onUpdate(editedStudent);
+    };
+      const [file, setFile] = useState(null);
+    // const [selectedFileName, setSelectedFileName] = useState(null);
+
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+    const [courseFees, setCourseFees] = useState(0);
+
+    const handleCourseFees = (e) => {
+        const course = e.target.value;
+        const fees = course === "Full Stack Development" ? localStorage.getItem("fsdFees") : localStorage.getItem("mobileAppDevelopmentFees");
+        setCourseFees(fees);
+    }
+
+     const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEditedStudent({ ...editedStudent, [name]: value });
+    };
+    const handleFileChange = (e) => {
+        const fileName = e.target.files[0].name;
+        setSelectedFileName(fileName);
+        console.log(file);
+    }
+
+    const [employeeForm, setEmployeeForm] = useState({
+        employeeId: '',
+        firstName: '',
+        lastName: '',
+        fatherName: '',
+        motherName: '',
+        dateOfBirth: '',
+        emailId: '',
+        address: '',
+        contactNumber1: '',
+        contactNumber2: '',
+        gender: '',
+        maritalStatus: '',
+        sslcPercentage: '',
+        qualification: '',
+        hscPercentage: '',
+        diplomaPercentage: '',
+        ugCollegeName: '',
+        ugSpecialization: '',
+        ugCgpa: '',
+        ugYearOfPassing: '',
+        pgCollegeName: '',
+        pgSpecialization: '',
+        pgCgpa: '',
+        pgYearOfPassing: '',
+        phdCollegeName: '',
+        phdSpecialization: '',
+        phdCgpa: '',
+        phdYearOfPassing: '',
+        workExperience: '',
+        designation: '',
+        salary: '',
+        annualSalary: '',
+        doj: '',
+        dor: '',
+        experience: '',
+        aadharNumber: '',
+        panNumber: '',
+        bankAccountNumber: '',
+        employeeImage: null,
+        employeeType: '',
+        comments: '',
+    });

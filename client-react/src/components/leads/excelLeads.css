@@ -1,0 +1,42 @@
+.input-button {
+    border: none;
+    border-radius: 20px;
+    background-color: #0090dd;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.input-button:hover {
+    background-color: #0077bb;
+}
+
+.input-file-form {
+    display: flex;
+    gap: 10px;
+}
+
+.success-fileButton,
+.remove-fileButton {
+    border: 1px solid #0076bb73;
+    border-radius: 4px;
+    color: #ffffffd1;
+    background-color: #0076bb73;
+}
+
+.success-fileButton:hover {
+    color: green;
+    background-color: rgba(144, 238, 144, 0.381);
+    border: 1px solid rgba(144, 238, 144, 0.381);
+}
+
+.remove-fileButton:hover {
+    color: lightcoral;
+    background-color: rgba(240, 128, 128, 0.532);
+    border: 1px solid transparent;
+}
+
+.table-body tr {
+    font-size: 13px;
+}
