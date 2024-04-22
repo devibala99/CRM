@@ -2,41 +2,48 @@ const User = require("../modals/userModal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { sendResetPasswordEmail } = require("../services/emailServices");
-// register user
-const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+let path = require('path');
 
-    if (!name || !email || !password) {
+const registerUser = async (req, res) => {
+    const { userName, password } = req.body;
+
+    if (!userName || !password) {
         return res.status(400).json({ err: "Please fill the fields" });
     }
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-        return res.status(400).json({ err: "User Already Exists" });
+
+    try {
+        const userExists = await User.findOne({ userName });
+
+        if (userExists) {
+            return res.status(400).json({ err: "User Already Exists" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 8);
+        const user = await User.create({
+            userName,
+            password: hashedPassword,
+        });
+
+        if (user) {
+            return res.status(201).json({
+                id: user._id,
+                userName: user.userName,
+                status: "User Created",
+            });
+        } else {
+            return res.status(400).json({ msg: "Invalid User Data" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ err: "Internal Server Error" });
     }
-    // bcrypt -- hashed password
-    const hashedPassword = await bcrypt.hash(password, 8);
-    // create user
-    const user = await User.create({
-        name, email, password: hashedPassword,
-    })
-    if (user) {
-        return res.status(201).json({
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            status: "User Created"
-        })
-    }
-    else {
-        return res.status(400).json({ msg: "Invalid User Data" })
-    }
-}
+};
+
 // check user existance while register user
 const checkUserExistance = async (req, res) => {
-    const { email } = req.body;
+    const { userName } = req.body;
     try {
-        const userExists = await User.findOne({ email });
+        const userExists = await User.findOne({ userName });
         res.json({ exists: !!userExists });
     }
     catch (error) {
@@ -46,14 +53,15 @@ const checkUserExistance = async (req, res) => {
 }
 // login user
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).maxTimeMS(30000);;
+    const { userName, password } = req.body;
+    const user = await User.findOne({ userName }).maxTimeMS(30000);
+
+    // console.log(userName, password, "login")
 
     if (user && (await bcrypt.compare(password, user.password))) {
         return res.status(200).json({
             _id: user._id,
-            name: user.name,
-            email: user.email,
+            userName: user.userName,
             token: generateToken(user._id),
             status: "Login Successfull"
         })
@@ -64,14 +72,19 @@ const loginUser = async (req, res) => {
 }
 
 const getMe = async (req, res) => {
-    const { _id, email, name } = await User.findById(req.user.id);
-    return res.status(200).json({ _id, name, email });
+    const { _id, userName } = await User.findById(req.user.id);
+    return res.status(200).json({ _id, userName });
 }
 // get users
 const getUser = async (req, res) => {
-    const userData = await User.find();
-    res.json(userData);
+    try {
+        const userData = await User.find();
+        res.json(userData);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
 }
+
 // generate token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -83,7 +96,6 @@ const generateToken = (id) => {
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
     try {
-
         const oldUser = await User.findOne({ email });
         if (!oldUser) {
             return res.json({ status: "User Not Exists!" });
@@ -113,12 +125,12 @@ const forgotPassword = async (req, res) => {
                 res.status(500).json({ error: 'Failed to send email' });
             }
             else {
-                console.log('Email sent: ' + info.response);
+                // console.log('Email sent: ' + info.response);
                 res.json({ status: 'Email sent successfully' });
             }
         });
     } catch (error) {
-        console.error('Error in forgotPassword:', error);
+        // console.error('Error in forgotPassword:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 }
@@ -145,7 +157,7 @@ const postResetPassword = async (req, res) => {
     const { id, token } = req.params;
     const { password, confirmPassword } = req.body;
     const oldUser = await User.findOne({ _id: id });
-    console.log(password, confirmPassword);
+    // console.log(password, confirmPassword);
     if (!oldUser) {
         return res.json({ status: "User not exists!!" });
     }
@@ -173,7 +185,50 @@ const postResetPassword = async (req, res) => {
         res.status(500).json({ status: "Something went wrong" });
     }
 }
+// updateUser
+const updateUser = async (req, res) => {
+    const { userId } = req.params;
+    const { userName, password } = req.body;
+    // console.log("User ID:", userId);
+    // console.log(userName, password);
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        if (userName) user.userName = userName;
+
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 8);
+            user.password = hashedPassword;
+        }
+        await user.save();
+        return res.status(200).json({ message: "User updated successfully", user });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+const deleteUser = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        await User.findByIdAndDelete(userId);
+
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 module.exports = {
     registerUser, loginUser, getMe, getUser, checkUserExistance,
-    forgotPassword, getResetPassword, postResetPassword
+    forgotPassword, getResetPassword, postResetPassword, updateUser, deleteUser
 }
+

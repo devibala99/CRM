@@ -29,10 +29,10 @@ const ActionMenu = ({ lead, handleEdit, handleDeleteClick, handleViewLead, handl
                 <MenuItem onClick={() => { handleClose(); handleDeleteClick(lead); }} style={{ fontSize: '14px' }}>
                     Delete Lead
                 </MenuItem>
-                <MenuItem onClick={() => { handleClose(); handleViewLead(lead); }} style={{ fontSize: '14px' }}>
+                {/*   <MenuItem onClick={() => { handleClose(); handleViewLead(lead); }} style={{ fontSize: '14px' }}>
                     View Lead
                 </MenuItem>
-                {/*  <MenuItem onClick={() => { handleClose(); handleClick(lead); }} style={{ fontSize: '14px' }}>
+                  <MenuItem onClick={() => { handleClose(); handleClick(lead); }} style={{ fontSize: '14px' }}>
                     Convert To Deal
                 </MenuItem> * */}
             </Menu>

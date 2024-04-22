@@ -2,12 +2,12 @@
     overflow: hidden;
     max-height: 0;
     transition: max-height 0.5s ease-out;
-    border-bottom: 2px solid rgba(159, 159, 159, 0.497);
-    /* padding-bottom: 2rem; */
 }
 
 .dropdown-container.open {
     max-height: 100%;
+    border-bottom: 1px solid rgba(159, 159, 159, 0.497);
+
 }
 
 .dropdown-content {
@@ -29,9 +29,9 @@
 
 .filter-btn {
     width: 100px;
-    padding: .5rem;
+    padding: .2rem;
     background-color: #0090dd;
-    border-radius: 25px;
+    border-radius: 4px;
     color: white;
     border: none;
     outline: none;
@@ -72,6 +72,46 @@
 .filter-section-right {
     padding: 1rem 0;
     display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.section-content-btns {
+    display: flex;
+    flex-direction: row;
     justify-content: flex-end;
-    padding-right: .5rem;
+    gap: 10px;
+    align-items: center;
+    padding: 0 1rem;
+    height: fit-content;
+}
+
+.section-content-btns>div {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.link-view .btn-sec-shortcut,
+.btn-sec-shortcut {
+    border: none;
+    background-color: #0090dd;
+    border-radius: 4px;
+}
+
+.btn-sec-shortcut button,
+.link-view .btn-sec-shortcut a {
+    display: inline-flex;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding: 0.5rem;
+    font-size: 16px;
+}
+
+input[type="text"]:focus {
+    border: 2px solid #57a4e9;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.2);
 }

@@ -116,7 +116,7 @@ const CreateCashout = () => {
 
             if (action.type === 'cashoutReceipts/createCashoutReceipt/fulfilled' && response) {
                 const updatedRemainingAmount = cashoutReceipt.currentBalance - cashoutReceipt.paidAmount;
-                console.log("Selected:::", selectedVendor.id, updatedRemainingAmount);
+                // console.log("Selected:::", selectedVendor.id, updatedRemainingAmount);
 
                 const updateVendorAction = await dispatch(updateVendorDetail({
                     vendorId: selectedVendor.id,

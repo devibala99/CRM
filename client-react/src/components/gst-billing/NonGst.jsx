@@ -87,7 +87,7 @@ const NonGst = () => {
     }
     const finalTotalWords = numberToWords.toWords(totalSum()).toUpperCase();
     const printDunc = () => {
-        console.log("---", newRow);
+        // console.log("---", newRow);
         setIsPrintClicked(true);
         window.print();
     }
@@ -96,23 +96,23 @@ const NonGst = () => {
             <div className="bill_header_segment">
                 <div className="segment_left">
                     <div className="bill_heading">
-                        <h1>ESTIMATED BILL</h1>
-                        <h3>KITKAT SOFTWARE TEECHNOLOGIES</h3>
+                        <h1 className='bill_heading_text'>ESTIMATED BILL</h1>
                     </div>
                     <div className="bill_address">
-                        <h4 style={{ lineHeight: '1.5' }}>
-                            No: 70/77 , 1st Floor, Krishna complex, PN Palayam <br />
+                        <h2>KITKAT SOFTWARE TECHNOLOGIES</h2>
+                        <p style={{ lineHeight: '1.5', fontWeight: "550" }}>
+                            No: 70/77 , 1st Floor, Krishna complex, PN Palayam<br />
                             Coimbatore-641037 <br />
                             Phone No : 7010816299 , 04224957272.
-                        </h4>
+                        </p>
                     </div>
 
                     <div className="bill_invoiceTo">
+                        <h4 style={{ paddingTop: "8px" }}>INVOICE TO:</h4> &nbsp;
                         <div className="select-name" data-selected-option={clientNameCurrent} style={{ margin: "0", padding: "0" }}>
-                            <h4 style={{ margin: "0", padding: "0" }}>INVOICE TO:</h4> &nbsp;
                             <select value={clientNameCurrent} onChange={handleClientSelect} name='emp_name' style={{ width: "200px", fontWeight: "bold", margin: "0", padding: "0", fontSize: "1rem" }}>
                                 <option value="" style={{ width: "200px" }}>Select a Client</option>
-                                {clientList.map(client => (
+                                {Array.isArray(clientList) && clientList.map(client => (
                                     <option key={client.id} value={client.clientName} style={{ width: "200px", margin: "0", padding: "0" }}>
                                         {client.clientName}
                                     </option>
@@ -137,13 +137,16 @@ const NonGst = () => {
                         <img src={logoimg} alt="logo" />
                     </div>
                     <div className="date-field">
-                        <h4 className='text'>DATE:</h4>
-                        <h4 className='date'> {formattedDate}</h4>
+                        <div className="date-field-heading">
+                            <h5>DATE</h5>
+                            <h5>INVOICE NO</h5>
+                        </div>
+                        <div className="date-field-details">
+                            <h5>{formattedDate}</h5>
+                            <h5>{selectedClient.inVoice_no}</h5>
+                        </div>
                     </div>
-                    <div className="invoice-field">
-                        <h4><span style={{ fontWeight: "bold" }}>INVOICE NO:</span>{selectedClient.inVoice_no}</h4>
-                        <h4><span style={{ fontWeight: "bold" }}>GSTIN:</span>33BIQPA2943B1ZQ</h4>
-                    </div>
+
                 </div>
             </div>
             <div className="table_gst">

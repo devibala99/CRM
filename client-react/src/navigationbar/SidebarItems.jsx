@@ -14,6 +14,7 @@ export default function SidebarItems({ item, sidebarWidth }) {
 
     const handleLogout = () => {
         dispatch(logout());
+
         navigate("/");
     };
     if (item.dropdowns && sidebarWidth !== '60px') {
@@ -37,7 +38,7 @@ export default function SidebarItems({ item, sidebarWidth }) {
             </div>
         );
     }
-    else if (sidebarWidth === '60px' && ['Dashboard', 'Student Info', 'Attendance', 'Receipt', 'Leads', 'Vendors', 'Billing', 'Customer', 'Master', 'Logout'].includes(item.title)) {
+    else if (sidebarWidth === '60px' && ['Dashboard', 'Student Info', 'Attendance', 'Receipt', 'Leads', 'Interview', 'Reports', 'Vendors', 'Billing', 'Customer', 'Master', 'Logout'].includes(item.title)) {
         return (
             <div className="sidebar-list-min">
                 {item.title === 'Logout' ? (

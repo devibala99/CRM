@@ -1,5 +1,4 @@
 .view-modal-container h1 {
-    padding: 0 0 1rem 0;
     color: #0090dd;
 }
 
@@ -27,4 +26,14 @@
 .right-container p {
     font-weight: 400;
     color: black;
+}
+
+.cancel-model-btn {
+    padding: 10px;
+    color: grey;
+    cursor: pointer;
+}
+
+.cancel-model-btn:hover {
+    color: red;
 }

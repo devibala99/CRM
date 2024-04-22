@@ -376,4 +376,34 @@ span {
     @page {
         margin: 0;
     }
+
+    body * {
+        visibility: hidden;
+        /* border: 1px solid red; */
+    }
+
+    .printGST_container,
+    .printGST_container * {
+        visibility: visible;
+    }
+
+    .printGST_container {
+        position: relative;
+        background-color: var(--background-primary);
+        font-family: Arial, sans-serif;
+        padding: 2rem;
+        width: 100%;
+    }
+
+    .printGST_container .print-submit {
+        display: none;
+    }
+
+    .printGST_container .print-btn {
+        display: none;
+    }
+
+    .printGST_container .print-btn-disable {
+        display: none;
+    }
 }

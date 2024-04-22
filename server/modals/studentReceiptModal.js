@@ -11,6 +11,8 @@ const studentReceiptSchema = new mongoose.Schema({
     bankPaymentType: { type: String },
     onlinePaymentGateway: { type: String },
     chequeNumber: { type: String },
+    course: { type: String },
+    duration: { type: String },
     comments: { type: String }
 });
 

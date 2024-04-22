@@ -37,7 +37,7 @@ const studentSchema = mongoose.Schema({
     },
     contactNumber1: {
         type: String,
-        required: true
+        required: true,
     },
     contactNumber2: {
         type: String,

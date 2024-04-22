@@ -38,10 +38,10 @@ export const updateCourse = createAsyncThunk(
     async ({ courseId, courseData }) => {
         try {
             const response = await axios.put(`${API_UPDATE_COURSE}/${courseId}`, courseData);
-            console.log("Redux--", response.data);
+            // console.log("Redux--", response.data);
             return response.data;
         } catch (error) {
-            console.log("Redux--", error.response.data);
+            // console.log("Redux--", error.response.data);
             throw error.response.data;
         }
     }
@@ -88,9 +88,12 @@ const courseSlice = createSlice({
                 state.error = null;
             })
             .addCase(createCourse.fulfilled, (state, action) => {
-                state.loading = false;
-                state.courseEntries = [...(state.courseEntries || []), action.payload];
-                state.error = null;
+                return {
+                    ...state,
+                    loading: false,
+                    courseEntries: Array.isArray(state.courseEntries) ? [...state.courseEntries, action.payload] : [action.payload],
+                    error: null,
+                };
             })
 
             .addCase(createCourse.rejected, (state, action) => {
@@ -101,12 +104,16 @@ const courseSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
+            // .addCase(updateCourse.fulfilled, (state, action) => {
+            //     state.loading = false;
+            //     state.courseEntries = state.courseEntries ? state.courseEntries.map(course => course.courseId === action.payload.id ? action.payload : course) : [];
+            //     state.error = null;
+            // })
             .addCase(updateCourse.fulfilled, (state, action) => {
                 state.loading = false;
-                state.courseEntries = state.courseEntries ? state.courseEntries.map(course => course.courseId === action.payload.id ? action.payload : course) : [];
+                state.courseEntries = state.courseEntries?.map(course => course.courseId === action.payload.id ? action.payload : course) || [];
                 state.error = null;
             })
-
             .addCase(updateCourse.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
@@ -115,15 +122,21 @@ const courseSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
+            // .addCase(deleteCourse.fulfilled, (state, action) => {
+            //     state.loading = false;
+            //     state.courseEntries = state.courseEntries.filter(course => course.id !== action.payload.id);
+            //     state.error = null;
+            // })
             .addCase(deleteCourse.fulfilled, (state, action) => {
                 state.loading = false;
-                state.courseEntries = state.courseEntries.filter(course => course.id !== action.payload.id);
+                state.courseEntries = state.courseEntries?.filter(course => course.id !== action.payload.id) || [];
                 state.error = null;
             })
             .addCase(deleteCourse.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
+
     }
 })
 

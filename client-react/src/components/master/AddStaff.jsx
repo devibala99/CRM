@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createStaffDetail } from '../features/staffSlice';
@@ -6,6 +7,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import Select from 'react-select';
 import { showEmployees, updateEmployee } from "../features/employeesSlice";
 import { Link } from 'react-router-dom';
+import { createUser } from "../features/registerDetailSlice";
 
 
 const AddStaff = () => {
@@ -13,9 +15,10 @@ const AddStaff = () => {
         staffName: "",
         staffDoj: "",
         comments: "",
+        userName: "",
+        password: "",
     });
     const [name, setName] = useState("");
-
     const dispatch = useDispatch();
     const employeeList = useSelector(state => state.employees.employeeEntries);
 
@@ -29,11 +32,10 @@ const AddStaff = () => {
     const handleStaffSubmit = (e) => {
         e.preventDefault();
         const updatedStaff = { ...createStaff, staffName: name };
-
+        console.log(updatedStaff, "Frontend", name);
         if (name) {
             const staffDoj = createStaff.staffDoj;
             const selectedEmployee = employeeList.find(employee => `${employee.firstName} ${employee.lastName}` === name);
-
             if (selectedEmployee) {
                 const updatedEmployee = {
                     ...selectedEmployee,
@@ -41,10 +43,19 @@ const AddStaff = () => {
                     staffDoj: staffDoj
                 };
                 dispatch(updateEmployee({ id: updatedEmployee.id, data: updatedEmployee }));
+                dispatch(createUser({ userName: createStaff.userName, password: createStaff.password }));
             }
         }
 
         dispatch(createStaffDetail(updatedStaff));
+
+        setCreateStaff({
+            staffName: "",
+            staffDoj: "",
+            userName: "",
+            password: "",
+            comments: "",
+        })
     };
 
     const handleCreateOption = (inputValue) => {
@@ -56,22 +67,22 @@ const AddStaff = () => {
         }));
         return newOption;
     };
-    const employeeOptions = employeeList.map(employee => ({
+    const employeeOptions = Array.isArray(employeeList) ? employeeList.map(employee => ({
         value: employee.id,
         label: `${employee.firstName} ${employee.lastName}`
-    }));
+    })) : [];
 
     return (
         <div className='student-view-container'>
             <div className="bread-crumb">
                 <div className="content-wrapper">
                     <div className="link-view" style={{ border: "none", backgroundColor: "#0090dd", borderRadius: '25px' }}>
-                        <Link to="/home/vendors" className="custom-link" style={{ fontSize: "16px", textAlign: "center", color: "white", padding: "0 20px 0 20px" }}>
+                        <Link to="/home/new-employee/:employeeId" className="custom-link" style={{ fontSize: "16px", textAlign: "center", color: "white", padding: "0 20px 0 20px" }}>
                             <GroupsIcon style={{ fontSize: "1rem", color: "white" }} />
-                            &nbsp; Vendors
+                            &nbsp; Add Employee
                         </Link>
                     </div>
-                    <h2 style={{ color: "#0090dd" }}>Register Staff</h2>
+                    <h2 style={{ color: "#0090dd" }}>Register Admin</h2>
                     <SidebarBreadcrumbs />
                 </div>
             </div>
@@ -96,6 +107,7 @@ const AddStaff = () => {
                                 option: (provided) => ({ ...provided, textAlign: "left" })
                             }}
                             onCreateOption={handleCreateOption}
+                            isRequired
                         />
                     </div>
 
@@ -107,7 +119,33 @@ const AddStaff = () => {
                             id="staffDoj"
                             name="staffDoj"
                             value={createStaff.staffDoj}
+                            required
                             onChange={e => setCreateStaff({ ...createStaff, staffDoj: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="userName">User Name:</label>
+                        <input
+                            type="text"
+                            id="userName"
+                            name="userName"
+                            autoComplete="username"
+                            value={createStaff.userName}
+                            required
+                            onChange={e => setCreateStaff({ ...createStaff, userName: e.target.value })}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            style={{ padding: ".5rem" }}
+                            value={createStaff.password}
+                            autoComplete="current-password"
+                            required
+                            onChange={e => setCreateStaff({ ...createStaff, password: e.target.value })}
                         />
                     </div>
                     <div className="form-group">

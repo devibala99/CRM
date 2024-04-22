@@ -87,7 +87,7 @@ const setStudents = async (req, res) => {
             studentStatus: req.body.studentStatus,
             comments: req.body.comments,
         });
-        console.log("created--", newStudent);
+        // console.log("created--", newStudent);
         res.status(200).json(newStudent);
     } catch (error) {
         console.error("error created---", error);
@@ -97,12 +97,11 @@ const setStudents = async (req, res) => {
 
 
 const getStudents = async (req, res) => {
-
     try {
         const students = await Students.find();
 
         if (!students || students.length === 0) {
-            return res.status(404).json({ message: 'No Studentss found', students: [] });
+            return res.status(200).json({ message: 'No students found', students: [] });
         }
         const response = students.map(students => ({
             id: students._id,
@@ -148,11 +147,11 @@ const getStudents = async (req, res) => {
 
         res.status(200).json(response);
     } catch (error) {
-        console.error('Error getting Students:', error);
+        console.error('Error getting students:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-
 }
+
 const updateStudent = async (req, res) => {
 
     try {
@@ -210,7 +209,7 @@ const updateStudent = async (req, res) => {
         if (!updatedStudent) {
             return res.status(404).json({ message: 'Student not found' });
         }
-        console.log(updatedStudent);
+        // console.log(updatedStudent);
         res.status(200).json(updatedStudent);
     } catch (error) {
         console.error('Error updating student:', error);

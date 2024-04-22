@@ -86,7 +86,7 @@ const setEmployee = async (req, res) => {
             staffDoj: req.body.staffDoj,
             comments: req.body.comments,
         });
-        console.log("created");
+        // console.log("created");
         res.status(200).json(newEmployee);
     } catch (error) {
         console.log("error created");
@@ -100,7 +100,7 @@ const getEmployees = async (req, res) => {
         const employees = await Employees.find();
 
         if (!employees || employees.length === 0) {
-            return res.status(404).json({ message: 'No Employees found', employees: [] });
+            return res.status(200).json({ message: 'No Employees found', employees: [] });
         }
 
         const response = employees.map(employee => ({
@@ -163,7 +163,7 @@ const convertStudentToEmployee = async (req, res) => {
 
         studentData.employeeImage = studentData.studentImage;
         // studentData.employeeType = studentData.studentType;
-        delete studentData._id;
+        delete studentData.id;
         delete studentData.__v;
         delete studentData.studentImage;
         delete studentData.studentType;
@@ -179,7 +179,7 @@ const convertStudentToEmployee = async (req, res) => {
         }
         const newEmployee = await Employees.create(studentData);
 
-        console.log("Employee created successfully:", newEmployee);
+        // console.log("Employee created successfully:", newEmployee);
         res.status(200).json({ message: 'Employee data received successfully', studentData });
     } catch (error) {
         console.log("Error converting student to employee:", error);
@@ -249,7 +249,7 @@ const updateEmployee = async (req, res) => {
         if (!updatedEmployee) {
             return res.status(404).json({ message: 'Employee not found' });
         }
-        console.log(updatedEmployee);
+        // console.log(updatedEmployee);
         res.status(200).json(updatedEmployee);
     } catch (error) {
         console.error('Error updating employee', error);

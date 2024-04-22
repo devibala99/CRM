@@ -94,8 +94,7 @@ const Clients = () => {
             })
         }
         catch (error) {
-            console.log("Error:", error);
-
+            alert("Some Internal Error Occured. Phone Number must be unique.");
         }
     }
     return (
@@ -126,7 +125,7 @@ const Clients = () => {
                     </div>
                     <div className="form-group">
                         <label>Contact Number:</label>
-                        <input type='text' value={clientForm.phoneNumber} onChange={handleInputChange} name='phoneNumber' />
+                        <input type='text' maxLength={10} minLength={10} value={clientForm.phoneNumber} onChange={handleInputChange} name='phoneNumber' />
                     </div>
                     <div className="form-group">
                         <label>Date:</label>

@@ -12,7 +12,6 @@ export const createClient = createAsyncThunk(
             return response.data;
         }
         catch (error) {
-            alert("Some Internal Error Occured, Please Try Again");
             throw error.response.data;
         }
     }
@@ -65,9 +64,11 @@ export const clients = createSlice({
             })
             .addCase(createClient.fulfilled, (state, action) => {
                 state.loading = false;
-                state.clientEntries.push(action.payload);
+                const newClient = action.payload;
+                state.clientEntries = [...state.clientEntries, newClient];
                 state.error = null;
             })
+
             .addCase(createClient.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;

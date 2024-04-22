@@ -54,33 +54,63 @@
 
 }
 
+/* 
 .btn-grp-table {
     display: flex;
-    gap: 20px;
-    justify-content: flex-end;
-    /* width: 15%; */
-}
+    gap: 10px; 
+    width: 15%;
+} */
 
 .edit-view-btn,
 .delete-view-btn,
 .display-view-btn,
-.add-view-btn {
+.add-view-btn,
+.pdf-download-btn {
     width: 100%;
     cursor: pointer;
     margin-right: 10px;
-    color: #bdbdbd;
+    color: white;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 1.6rem;
+}
+
+.edit-view-btn {
+    background-color: gold;
 }
 
 .edit-view-btn:hover {
-    color: #0090dd;
+    color: goldenrod;
+
+}
+
+.pdf-download-btn {
+    background-color: #feb630;
+}
+
+.pdf-download-btn:hover {
+    color: #FFA500;
+}
+
+.delete-view-btn {
+    background-color:
+        #fc544b;
 }
 
 .delete-view-btn:hover {
-    color: red;
+    color: rgb(255, 175, 175);
+}
+
+.display-view-btn {
+    background-color: #3abaf4;
 }
 
 .display-view-btn:hover {
-    color: gold;
+    color: #0090dd;
+}
+
+.add-view-btn {
+    background-color: #32cd34;
 }
 
 .add-view-btn:hover {

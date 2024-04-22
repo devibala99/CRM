@@ -14,6 +14,7 @@ import vendorDetails from "./vendorDetailsSlice";
 import staffDetails from "./staffSlice";
 import leadDetails from "./leadSlice";
 import leadExcelDetails from "./leadExcelSlice";
+import interviewSlice from "./interviewSlice";
 const rootReducer = combineReducers({
     user: registerDetail,
     loginDetail: loginDetail,
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
     staffDetails: staffDetails,
     leadDetails: leadDetails,
     leadExcelDetails: leadExcelDetails,
+    interviews: interviewSlice,
 });
 
 export default rootReducer;

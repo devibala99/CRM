@@ -43,6 +43,7 @@
 .form-group input[type="tel"],
 .form-group input[type="file"],
 .form-group input[type="number"],
+
 .form-group select,
 .form-group textarea {
     flex: 1;
@@ -50,6 +51,20 @@
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+#time-input input[type="time"] {
+    width: 100%;
+    flex: 1;
+    padding: 6px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#time-input input:focus {
+    border: 2px solid #57a4e9;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.2);
 }
 
 .full-width {

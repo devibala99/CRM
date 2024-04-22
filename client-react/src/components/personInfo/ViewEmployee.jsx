@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { showEmployees, deleteEmployee, updateEmployee } from '../features/employeesSlice';
 import { Table, TableBody, TableCell, TableContainer, Tooltip, TableHead, TableRow, Paper, Button } from '@mui/material';
-import Pagination from '@mui/material/Pagination';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import "./viewTable.css"
@@ -15,6 +14,7 @@ import EditEmployeeEdit from './EditEmployeeEdit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { styled } from '@mui/system';
+import Pagination from '@mui/material/Pagination'
 
 const StyledTableHead = styled(TableHead)({
     backgroundColor: "#D3D3D3",
@@ -25,7 +25,39 @@ const StyledTableCell = styled(TableCell)({
     fontWeight: 'bold',
     fontSize: "15px",
 });
+// Custom styled components for Previous and Next buttons
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
 
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 
 const ViewEmployee = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -35,29 +67,34 @@ const ViewEmployee = () => {
     const [page, setPage] = useState(1);
     const [displayModalOpen, setDisplayModalOpen] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
-    const [popupMessage, setPopupMessage] = useState('');
 
     const employees = useSelector(state => state.employees.employeeEntries);
 
     const dispatch = useDispatch();
 
     // Pagination
-    const employeesPerPage = 5;
+    const employeesPerPage = 10;
     const indexOfLastEmployee = page * employeesPerPage;
     const indexOfFirstEmployee = indexOfLastEmployee - employeesPerPage;
     const currentEmployees = filteredEmployees.slice(indexOfFirstEmployee, indexOfLastEmployee);
-
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
     useEffect(() => {
         dispatch(showEmployees());
     }, [dispatch]);
 
     useEffect(() => {
-        // Filter Employees based on search term
-        const filtered = employees.filter(employee =>
-            employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            employee.lastName.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredEmployees(filtered);
+        if (employees.length > 0) {
+            const filtered = employees.filter(employee =>
+                employee.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                employee.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredEmployees(filtered);
+        }
+        else {
+            setFilteredEmployees([]);
+        }
     }, [employees, searchTerm]);
 
     // delete warning modal
@@ -82,28 +119,6 @@ const ViewEmployee = () => {
         setIsWarningModalOpen(false);
         window.location.reload();
     };
-
-    // const handleDelete = (id) => {
-    //     dispatch(deleteEmployee(id))
-    //         .then((res) => {
-    //             if (res.payload && res.payload.message === 'Employee deleted successfully') {
-    //                 setPopupMessage('Employee deleted successfully');
-    //                 setShowPopup(true);
-    //                 setFilteredEmployees(prevFilteredEmployees => prevFilteredEmployees.filter(employee => employee.id !== id));
-    //                 setTimeout(() => {
-    //                     setShowPopup(false);
-    //                 }, 3000);
-    //             } else {
-    //                 setPopupMessage('Internal Error Occurred');
-    //                 setShowPopup(true);
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error deleting employee:', error);
-    //             setPopupMessage('Internal Error Occurred');
-    //             setShowPopup(true);
-    //         });
-    // };
     const handleClosePopup = () => {
         setShowPopup(false);
     };
@@ -194,7 +209,7 @@ const ViewEmployee = () => {
                                     <StyledTableCell>DOB</StyledTableCell>
                                     <StyledTableCell>Email</StyledTableCell>
                                     <StyledTableCell>Contact</StyledTableCell>
-                                    <StyledTableCell>Teaching</StyledTableCell>
+                                    <StyledTableCell>Admin</StyledTableCell>
                                     <StyledTableCell>Designation</StyledTableCell>
                                     <StyledTableCell>Salary</StyledTableCell>
                                     <StyledTableCell>Actions</StyledTableCell>
@@ -219,9 +234,10 @@ const ViewEmployee = () => {
                                             <TableCell style={{ fontSize: "13px" }}>{dateFormation(employee.dateOfBirth)}</TableCell>
                                             <TableCell style={{ fontSize: "13px" }}>{employee.emailId}</TableCell>
                                             <TableCell style={{ fontSize: "13px" }}>{employee.contactNumber1}</TableCell>
-                                            <TableCell style={{ fontSize: "13px" }}>{employee.isStaff}</TableCell>
-                                            <TableCell style={{ fontSize: "13px" }}>{employee.designation}</TableCell>
-                                            <TableCell style={{ fontSize: "13px" }}>{employee.salary}</TableCell>
+                                            <TableCell style={{ fontSize: "13px" }}>{employee.isStaff !== undefined ? employee.isStaff : ''}</TableCell>
+                                            <TableCell style={{ fontSize: "13px" }}>{employee.designation !== undefined ? employee.designation : ''}</TableCell>
+                                            <TableCell style={{ fontSize: "13px" }}>{employee.salary !== undefined ? employee.salary : ''}</TableCell>
+
                                             <TableCell className='btn-grp-table'>
                                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                                     <Tooltip title="Edit">
@@ -244,8 +260,29 @@ const ViewEmployee = () => {
                     </TableContainer>
                 </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <Pagination count={Math.ceil(filteredEmployees.length / employeesPerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                <PrevButton
+                    onClick={() => handleChangePage(null, page - 1)}
+                    disabled={page === 1}
+                >
+                    Prev
+                </PrevButton>
+                <ActivePagination
+                    count={Math.ceil(filteredEmployees.length / employeesPerPage)}
+                    page={page}
+                    onChange={handleChangePage}
+                    variant="outlined"
+                    shape="rounded"
+                    hideNextButton
+                    hidePrevButton
+                />
+
+                <NextButton
+                    onClick={() => handleChangePage(null, page + 1)}
+                    disabled={page === Math.ceil(filteredEmployees.length / employeesPerPage)}
+                >
+                    Next
+                </NextButton>
             </div>
 
             {selectedEmployee && (

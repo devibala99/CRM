@@ -2,10 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { getReceipts, deleteReceipt } from '../features/studentReceiptSlice';
+import { getStudentReceipts, deleteReceipt } from '../features/studentReceiptSlice';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Tooltip, Paper } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import Pagination from '@mui/material/Pagination';
 import { styled } from '@mui/system';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -16,6 +15,11 @@ import "../personInfo/viewTable.css";
 import "./detailModal.css"
 import CustomerTable from './CustomerTable';
 import DetailsModal from './DetailsModal';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import logoKitkat from "../../navigationbar/assets/kitkat-removebg-preview.png"
+import jsPDF from "jspdf";
+import Pagination from '@mui/material/Pagination';
+
 const StyledTableHead = styled(TableHead)({
     backgroundColor: "#D3D3D3",
 });
@@ -28,7 +32,39 @@ const StyledTableCell = styled(TableCell)({
 const StyledTableRow = styled(TableRow)({
     height: '15px',
 });
+// Custom styled components for Previous and Next buttons
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
 
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 const Cashin = () => {
     const [cashInPerson, setCashInPerson] = useState(() => localStorage.getItem('cashInPerson') || "");
     const dispatch = useDispatch();
@@ -40,10 +76,14 @@ const Cashin = () => {
     const [filteredStudents, setFilteredStudents] = useState([]);
     // Pagination
     const [page, setPage] = useState(1);
-    const studentsPerPage = 5;
+    const studentsPerPage = 10;
     const indexOfLastStudent = page * studentsPerPage;
     const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
     const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
+
     // delete warning modal
     const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
     const [fieldToDelete, setFieldToDelete] = useState(null);
@@ -51,7 +91,7 @@ const Cashin = () => {
     // modal
     const [showModal, setShowModal] = useState(false);
     useEffect(() => {
-        dispatch(getReceipts());
+        dispatch(getStudentReceipts());
         dispatch(showStudents());
     }, [dispatch]);
     useEffect(() => {
@@ -70,47 +110,41 @@ const Cashin = () => {
         setSelectedStudent(student);
         setDisplayModalOpen(true);
         setShowModal(true);
-        console.log(student, "clicked");
+        // console.log(student, "clicked");
     };
     const handleCashInPersonChange = (e) => {
         const newValue = e.target.value;
         setCashInPerson(newValue);
         localStorage.setItem('cashInPerson', newValue);
     };
-    const handlePageChange = (event, value) => {
-        setPage(value);
-    };
+
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
-        console.log(searchTerm);
+        // console.log(searchTerm);
     };
     const handleDeleteClick = (student) => {
-        setIsWarningModalOpen(true);
-        console.log(student._id);
-        setFieldToDelete(student._id);
-        setStudentFirstName(student.studentName);
+        if (student && student._id) {
+            setFieldToDelete(student._id);
+            setStudentFirstName(student.studentName);
+            console.log(student, "DeleteHandle", fieldToDelete, studentFirstName);
+            setIsWarningModalOpen(true);
+        } else {
+            console.error("Invalid student object:", student);
+        }
     };
     const handleCancel = () => {
         setIsWarningModalOpen(false);
         setShowModal(false);
     };
-
     const confirmDelete = async (fieldToDelete) => {
+        console.log(fieldToDelete, "Confirm Field 1");
         try {
-            console.log(`Deleting field with ID: ${fieldToDelete}`);
-
             const selectedStudent = studentsReceipt.find(student => student._id === fieldToDelete);
-            const selectedCustomerToUpdate = studentsList.find(student => `${student.firstName} ${student.lastName}` ===
-                (selectedStudent.studentName)
-            );
-            console.log(studentsList, selectedCustomerToUpdate, selectedStudent);
+            console.log("SelectedStudent:", selectedStudent);
 
-            const updatedRemainingAmount = parseFloat(selectedStudent.remainingAmount) + parseFloat(selectedStudent.paidAmount);
-
-            await dispatch(updateStudent({
-                id: selectedCustomerToUpdate.id,
-                data: { remainingAmount: updatedRemainingAmount }
-            }));
+            if (!selectedStudent) {
+                throw new Error("Selected student not found");
+            }
 
             await dispatch(deleteReceipt(fieldToDelete));
             setIsWarningModalOpen(false);
@@ -120,6 +154,85 @@ const Cashin = () => {
             console.error('Error confirming delete:', error);
         }
     };
+    const handlePdfDownload = (student) => {
+        const { studentName, paymentType, paidAmount, remainingAmount, billDate, course, duration } = student;
+
+        // Create new jsPDF instance with A5 format
+        const doc = new jsPDF({
+            format: 'a5',
+            orientation: 'portrait',
+            unit: 'mm',  // set measurement unit to millimeters
+        });
+
+        // Set the desired width for the title columns
+        const titleWidth = 25;
+
+        // Set the padding and border color
+        const padding = 10;
+        const borderColor = '#808080';
+
+        // Add border around the content
+        const contentWidth = doc.internal.pageSize.width - 2 * padding;
+        const contentHeight = doc.internal.pageSize.height - 2 * padding;
+        doc.setDrawColor(borderColor);
+        doc.rect(padding, padding, contentWidth, contentHeight);
+
+        // Add logo aligned left with padding
+        const logoImg = logoKitkat; // Replace with the path to your logo image
+        const logoWidth = 40;
+        const logoHeight = 20;
+        const logoPadding = 5;
+        doc.addImage(logoImg, 'PNG', padding + logoPadding, padding + logoPadding, logoWidth, logoHeight);
+
+        // Add two break spaces
+        const breakSpaceHeight = 5; // Adjust as needed
+        doc.text('', padding + logoPadding, padding + logoPadding + logoHeight + padding + breakSpaceHeight);
+
+        // Add "Student Receipt" aligned right next to the logo with bold text
+        const textRightMargin = doc.internal.pageSize.width - padding - logoPadding;
+        const textYPosition = padding + logoPadding + logoHeight / 2;
+        doc.setFontSize(12); // Set font size for titles
+        doc.setFont('bold'); // Set font to bold
+        doc.text('INTERNSHIP ACKNOWLEDGEMENT', textRightMargin, textYPosition, { align: 'right' });
+
+        // Reset font to normal
+        doc.setFont('normal');
+
+        // Add titles with specified width below the logo
+        const titleYPosition = padding + logoPadding + logoHeight + 2 * padding + breakSpaceHeight;
+        doc.setFontSize(12); // Set font size for titles
+        doc.text('Student Name:', padding + logoPadding, titleYPosition);
+        doc.text('Course:', padding + logoPadding, titleYPosition + 10);
+        doc.text('Duration:', padding + logoPadding, titleYPosition + 20);
+        doc.text('Payment Type:', padding + logoPadding, titleYPosition + 30);
+        doc.text('Paying Amount:', padding + logoPadding, titleYPosition + 40);
+        doc.text('Balance Amount:', padding + logoPadding, titleYPosition + 50);
+        doc.text('Receipt Date:', padding + logoPadding, titleYPosition + 60);
+
+        // Add student data with specified width and left-aligned below the titles
+        const dataYPosition = padding + logoPadding + logoHeight + 2 * padding + breakSpaceHeight;
+        const dataXPosition = padding + logoPadding + titleWidth + 5;
+        doc.setFontSize(12); // Set font size for data values
+        doc.text(studentName, dataXPosition, dataYPosition);
+        doc.text(course, dataXPosition, dataYPosition + 10);
+        doc.text(duration, dataXPosition, dataYPosition + 20);
+        doc.text(paymentType, dataXPosition, dataYPosition + 30);
+        doc.text(paidAmount.toString(), dataXPosition, dataYPosition + 40);
+        doc.text(remainingAmount.toString(), dataXPosition, dataYPosition + 50);
+        doc.text(billDate, dataXPosition, dataYPosition + 60);
+
+        // Add "NOTE: Amount Cannot Be Refund" below the student data
+        const noteYPosition = padding + logoPadding + logoHeight + 1.5 * padding + 80;
+        doc.text('NOTE: Amount Cannot Be Refund', padding + logoPadding, noteYPosition);
+
+        // Add HR Signature
+        const signatureYPosition = noteYPosition + 2 * padding;
+        doc.text('HR Signature', padding + logoPadding, signatureYPosition);
+
+        // Save the PDF
+        doc.save(`${studentName}StudentReceipt.pdf`);
+    };
+
 
     return (
         <div className='student-view-container'>
@@ -212,16 +325,15 @@ const Cashin = () => {
                                                     <TableCell style={{ fontSize: "13px" }}>{studentsReceipt.paidAmount}</TableCell>
                                                     <TableCell style={{ fontSize: "13px" }}>{studentsReceipt.remainingAmount}</TableCell>
                                                     <TableCell style={{ fontSize: "13px" }}>{studentsReceipt.billDate}</TableCell>
-                                                    <TableCell>
+                                                    <TableCell align="center">
                                                         <Tooltip title="Display Receipt">
-                                                            <Button onClick={() => handleDisplayModalOpen(studentsReceipt)}>
-                                                                <VisibilityIcon style={{ color: "#9a9a9a" }} />
-                                                            </Button>
+                                                            <VisibilityIcon className="display-view-btn" onClick={() => handleDisplayModalOpen(studentsReceipt)} />
+                                                        </Tooltip>
+                                                        <Tooltip title="Download PDF">
+                                                            <PictureAsPdfIcon className="pdf-download-btn" onClick={() => handlePdfDownload(studentsReceipt)} />
                                                         </Tooltip>
                                                         <Tooltip title="Delete">
-                                                            <Button onClick={() => handleDeleteClick(studentsReceipt)}>
-                                                                <DeleteIcon style={{ color: "#9a9a9a" }} />
-                                                            </Button>
+                                                            <DeleteIcon className="delete-view-btn" onClick={() => handleDeleteClick(studentsReceipt)} />
                                                         </Tooltip>
 
                                                     </TableCell>
@@ -234,8 +346,28 @@ const Cashin = () => {
                             </Table>
                         </TableContainer>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                        <Pagination count={Math.ceil(filteredStudents.length / studentsPerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                        <PrevButton
+                            onClick={() => handleChangePage(null, page - 1)}
+                            disabled={page === 1}
+                        >
+                            Prev
+                        </PrevButton>
+                        <ActivePagination
+                            count={Math.ceil(studentsReceipt.length / studentsPerPage)}
+                            page={page}
+                            onChange={handleChangePage}
+                            variant="outlined"
+                            shape="rounded"
+                            hideNextButton
+                            hidePrevButton
+                        />
+                        <NextButton
+                            onClick={() => handleChangePage(null, page + 1)}
+                            disabled={page === Math.ceil(studentsReceipt.length / studentsPerPage)}
+                        >
+                            Next
+                        </NextButton>
                     </div>
                 </div>
             )}
@@ -262,7 +394,14 @@ const Cashin = () => {
                 showModal && (
                     <DetailsModal isOpen={showModal} onClose={handleCancel} fieldToShow={fieldToDelete}>
                         <div className="view-modal-container">
-                            <h1>Cash In</h1>
+                            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                                <div>
+                                    <h1>Student Cash In</h1>
+                                </div>
+                                <div>
+                                    <h2 className='cancel-model-btn' onClick={handleCancel}>X</h2>
+                                </div>
+                            </div>
                             <div className="modal-flex" style={{ border: "1px solid rgba(159, 159, 159, 0.497)" }}>
                                 <div className="left-container">
                                     <p>Student Name</p>

@@ -1,3 +1,4 @@
+// /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
@@ -12,10 +13,14 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-// import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-// import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import { useSelector } from 'react-redux';
+import Profile from './Profile';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from "../../../client-react/src/components/features/loginUserSlice";
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
 import { selectUser } from "../../../client-react/src/components/features/loginUserSlice";
+import { useNavigate } from "react-router-dom";
+
 
 import "./header.css"
 
@@ -43,33 +48,112 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center',
 }));
-
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: 'inherit',
     width: '100%',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
         // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        paddingLeft: `calc(1em + ${theme.spacing(5)})`,
+        border: "1px solid rgba(195,194,194,0.484)",
         transition: theme.transitions.create('width'),
         [theme.breakpoints.up('sm')]: {
-            width: '12ch',
+            width: '100%',
+            borderRadius: "25px",
+
             '&:focus': {
-                width: '20ch',
+                width: '100%',
             },
         },
     },
+
 }));
-const settings = ['Dashboard', 'Logout'];
+
+function getColorCode(letter) {
+    switch (letter.toUpperCase()) {
+        case 'A':
+            return '#7A6FBE'; // Purple
+        case 'B':
+            return '#5496E3'; // Blue
+        case 'C':
+            return '#5CB7B1'; // Teal
+        case 'D':
+            return '#7E685A'; // Brown
+        case 'E':
+            return '#FFB83C'; // Yellow
+        case 'F':
+            return '#F0776C'; // Pink
+        case 'G':
+            return '#70CC72'; // Green
+        case 'H':
+            return '#926AA6'; // Lavender
+        case 'I':
+            return '#89B9E8'; // Light Blue
+        case 'J':
+            return '#78B7BB'; // Aqua
+        case 'K':
+            return '#DE9E36'; // Orange
+        case 'L':
+            return '#ACD374'; // Lime
+        case 'M':
+            return '#C8A2C8'; // Light Purple
+        case 'N':
+            return '#87D5F3'; // Sky Blue
+        case 'O':
+            return '#E8A869'; // Light Orange
+        case 'P':
+            return '#F4BB7D'; // Peach
+        case 'Q':
+            return '#B5D8EB'; // Light Sky Blue
+        case 'R':
+            return '#9BBB59'; // Olive
+        case 'S':
+            return '#8CC7A6'; // Light Green
+        case 'T':
+            return '#D7B9D5'; // Light Lavender
+        case 'U':
+            return '#8FB2D3'; // Lighter Blue
+        case 'V':
+            return '#D09E9E'; // Light Red
+        case 'W':
+            return '#C3D69B'; // Pale Green
+        case 'X':
+            return '#DFDAC1'; // Beige
+        case 'Y':
+            return '#F0DDAA'; // Cream
+        case 'Z':
+            return '#EAD98B'; // Light Yellow
+        default:
+            return '#cccccb'; // grey (default color)
+    }
+}
+
+const settings = ['Profile', 'Logout'];
 
 export default function Headbar({ toggleSidebarWidth, onSearchInputChange }) {
 
+    const dispatch = useDispatch();
     const user = useSelector(selectUser);
     const getUserUpperCaseName = () => {
-        if (user && user.name) {
-            return user.name.toUpperCase();
+        if (user && user.userName) {
+            return user.userName.toUpperCase();
         }
         return '';
+    }
+    const navigate = useNavigate();
+    const [openProfileModal, setOpenProfileModal] = useState(false);
+
+    const handleOpenProfileModal = () => {
+        setOpenProfileModal(true);
+    };
+
+    const handleCloseProfileModal = () => {
+        setOpenProfileModal(false);
+        window.location.reload();
+    };
+    const getAvatarBackgroundColor = () => {
+        const firstLetter = getUserUpperCaseName().charAt(0);
+        return getColorCode(firstLetter);
     }
     const handleToggleSidebar = () => {
         toggleSidebarWidth();
@@ -99,6 +183,11 @@ export default function Headbar({ toggleSidebarWidth, onSearchInputChange }) {
             }
         }
     };
+    const handleLogout = () => {
+        dispatch(logout());
+
+        navigate("/");
+    };
     return (
         <div className="header-container">
             <div className="header">
@@ -121,10 +210,6 @@ export default function Headbar({ toggleSidebarWidth, onSearchInputChange }) {
                     <Tooltip title="Emails">
                         <EmailOutlinedIcon style={{ cursor: "pointer" }} />
                     </Tooltip>
-                    {/*  <Tooltip title="Notification">
-                        <NotificationsNoneOutlinedIcon style={{ cursor: "pointer" }} />
-    </Tooltip> */}
-
                     <Tooltip title="Full Screen">
                         <FullscreenIcon style={{ cursor: "pointer", fontSize: "1.8rem" }} onClick={handleFullScreenClick} />
                     </Tooltip>
@@ -133,7 +218,7 @@ export default function Headbar({ toggleSidebarWidth, onSearchInputChange }) {
                 <Box sx={{ flexGrow: 0 }}>
                     <Tooltip title="My Profile">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            <Avatar alt={getUserUpperCaseName()} src="/broken-image.jpg" />
+                            <Avatar alt={getUserUpperCaseName()} sx={{ bgcolor: getAvatarBackgroundColor() }} src="/broken-image.jpg" />
                         </IconButton>
                     </Tooltip>
                     <Menu
@@ -153,14 +238,19 @@ export default function Headbar({ toggleSidebarWidth, onSearchInputChange }) {
                         onClose={handleCloseUserMenu}
                     >
                         {settings.map((setting) => (
-                            <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                            <MenuItem key={setting} onClick={setting === 'Profile' ? handleOpenProfileModal : handleLogout}>
                                 <Typography textAlign="center">{setting}</Typography>
                             </MenuItem>
                         ))}
                     </Menu>
+
                 </Box>
             </div>
 
+            <Dialog open={openProfileModal} onClose={handleCloseProfileModal}>
+                <DialogTitle>Profile</DialogTitle>
+                <Profile onClose={handleCloseProfileModal} />
+            </Dialog>
         </div>
     );
 }

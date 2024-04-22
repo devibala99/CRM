@@ -6,13 +6,15 @@ import { API_LOGIN_URL, API_USER_GOALS } from '../../url/url';
 import { createSelector } from "@reduxjs/toolkit";
 export const loginUser = createAsyncThunk(
     "loginUser",
-    async ({ email, password }) => {
+    async ({ userName, password }) => {
         try {
-            const response = await axios.post(API_LOGIN_URL, { email, password });
+            const response = await axios.post(API_LOGIN_URL, { userName, password });
             if (response?.status === 200) {
+                // console.log("login redux--", response);
                 return { user: response.data, token: response.data.token };
             } else {
-                throw { message: "Incorrect email or password" };
+                // console.log("Error--Redux");
+                throw { message: "Incorrect userName or password" };
             }
         } catch (error) {
             throw error.response?.data || { message: "User Data Unavailable" };

@@ -24,7 +24,7 @@ export const showInvoice = createAsyncThunk(
     async () => {
         try {
             const response = await axios.get(API_SHOW_INVOICES);
-            console.log(response.data);
+            // console.log(response.data);
             return response.data;
         } catch (error) {
             throw error.response.data;
@@ -48,7 +48,6 @@ export const deleteInvoice = createAsyncThunk(
     "invoices/deleteInvoice",
     async (invoiceId) => {
         try {
-            console.log(invoiceId);
             const response = await axios.delete(`${API_DELETE_INVOICE}/${invoiceId}`);
             return response.data;
         } catch (error) {
@@ -73,9 +72,17 @@ const invoicesSlice = createSlice({
             })
             .addCase(createInvoice.fulfilled, (state, action) => {
                 state.loading = false;
-                state.invoiceEntries.push(action.payload);
+                if (!Array.isArray(state.invoiceEntries)) {
+                    state.invoiceEntries = [];
+                }
+                if (action.payload && typeof action.payload === 'object') {
+                    state.invoiceEntries.push(action.payload);
+                } else {
+                    console.error('Invalid payload received:', action.payload);
+                }
                 state.error = null;
             })
+
             .addCase(createInvoice.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;

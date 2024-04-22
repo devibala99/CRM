@@ -33,12 +33,13 @@ export const getStaffDetails = createAsyncThunk(
 
 export const updateStaffDetail = createAsyncThunk(
     "staffDetails/updateStaffDetail",
-    async ({ staffId, updatedData }) => {
+    async ({ id, updatedData }, { rejectWithValue }) => {
         try {
-            const response = await axios.put(`${API_UPDATE_STAFF_DETAIL}/${staffId}`, updatedData);
+            const response = await axios.put(`${API_UPDATE_STAFF_DETAIL}/${id}`, updatedData);
+            // console.log(response.data, "staff-redux")
             return response.data;
         } catch (error) {
-            throw error.response.data;
+            return rejectWithValue(error.message);
         }
     }
 );

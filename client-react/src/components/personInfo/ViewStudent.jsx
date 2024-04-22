@@ -5,8 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import DisplayStudentModal from './DisplayStudentModal';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { showStudents, deleteStudent, updateStudent, convertStudentToEmployeeData } from '../features/studentsSlice';
-import { Table, TableBody, TableCell, TableContainer, Menu, MenuItem, TableHead, TableRow, Paper, Button, Tooltip, Collapse } from '@mui/material';
-import Pagination from '@mui/material/Pagination';
+import { Table, TableBody, TableCell, TableContainer, Menu, MenuItem, TableHead, TableRow, Paper, Button, Tooltip } from '@mui/material';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import "./viewTable.css"
@@ -17,7 +16,7 @@ import WarningModal from '../master/WarningModal';
 import warningSign from "../master/assets/exclamation-mark.png";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-
+import Pagination from '@mui/material/Pagination'
 const StyledTableHead = styled(TableHead)({
     backgroundColor: "#D3D3D3",
 });
@@ -27,6 +26,38 @@ const StyledTableCell = styled(TableCell)({
     fontWeight: 'bold',
     fontSize: "15px",
 });
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 const ViewStudent = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredStudents, setFilteredStudents] = useState([]);
@@ -34,7 +65,9 @@ const ViewStudent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [displayModalOpen, setDisplayModalOpen] = useState(false);
-
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
     // delete warning modal
     const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
     const [fieldToDelete, setFieldToDelete] = useState(null);
@@ -49,7 +82,6 @@ const ViewStudent = () => {
         setFilterOption(option);
         setFilterMenuAnchor(null);
     };
-
     const handleFilterMenuOpen = (event) => {
         setFilterMenuAnchor(event.currentTarget);
     };
@@ -59,7 +91,7 @@ const ViewStudent = () => {
     };
 
     useEffect(() => {
-        const filtered = students.filter(student => {
+        const filtered = Array.isArray(students) ? students.filter(student => {
             if (filterOption === 'All') {
                 return true;
             } else if (filterOption === 'Paid') {
@@ -67,13 +99,12 @@ const ViewStudent = () => {
             } else if (filterOption === 'Unpaid') {
                 return student.remainingAmount > 0;
             }
-        });
+        }) : [];
         setFilteredStudents(filtered);
     }, [students, filterOption]);
 
     const handleDeleteClick = (student) => {
         setIsWarningModalOpen(true);
-        // console.log(student.id);
         setFieldToDelete(student.id);
         setStudentFirstName(student.firstName);
         setStudentLastName(student.lastName);
@@ -82,7 +113,6 @@ const ViewStudent = () => {
         setIsWarningModalOpen(false);
     };
     const confirmDelete = (fieldToDelete) => {
-        // console.log(`Deleting field with ID: ${fieldToDelete}`);
         dispatch(deleteStudent(fieldToDelete));
         setIsWarningModalOpen(false);
         window.location.reload();
@@ -90,34 +120,13 @@ const ViewStudent = () => {
 
     // one time clickable button
     const [clickedStudents, setClickedStudents] = useState([]);
-    const [studentData, setStudentData] = useState([]);
-    const fetchStudentsFromBackend = async () => {
-        try {
-            const response = await fetch('http://localhost:8011/info/allStudents');
-            if (!response.ok) {
-                throw new Error('Failed to fetch students');
-            }
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            throw error;
-        }
-    };
-    useEffect(() => {
-        fetchStudentsFromBackend().then((response) => {
-            setStudentData(response.data);
-        }).catch((error) => {
-            console.log("Error fetching students: ", error);
-        })
-    }, []);
-
+    // const [studentData, setStudentData] = useState([]);
     const handleClick = (student) => {
-        if (!clickedStudents.includes(student._id)) {
-            setClickedStudents([...clickedStudents, student._id]);
+        if (!clickedStudents.includes(student.id)) {
+            setClickedStudents([...clickedStudents, student.id]);
             handleConvertToEmployee(student);
             const updatedStudents = students.map(s => {
-                if (s._id === student._id) {
-                    alert("added")
+                if (s.id === student.id) {
                     return { ...s, clicked: true };
                 }
                 return s;
@@ -138,13 +147,16 @@ const ViewStudent = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        const filtered = students.filter(student =>
-            student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.lastName.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredStudents(filtered);
+        if (students.length > 0) {
+            const filtered = students.filter(student =>
+                student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredStudents(filtered);
+        } else {
+            setFilteredStudents([]);
+        }
     }, [students, searchTerm]);
-
 
     const dateFormation = (dateString) => {
         const date = new Date(dateString);
@@ -154,7 +166,6 @@ const ViewStudent = () => {
     const handleDisplayModalOpen = (student) => {
         setSelectedStudent(student);
         setDisplayModalOpen(true);
-        // console.log(student, "clicked");
     };
     const handleDisplayModalClose = () => {
         setDisplayModalOpen(false);
@@ -171,10 +182,6 @@ const ViewStudent = () => {
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
-
-    const handlePageChange = (event, value) => {
-        setPage(value);
-    };
     const handleUpdate = (updatedStudentData) => {
         dispatch(updateStudent(updatedStudentData));
     };
@@ -184,10 +191,11 @@ const ViewStudent = () => {
 
         const differenceInTime = currentDate.getTime() - startDate.getTime();
         const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-        console.log(differenceInDays);
+        // console.log(differenceInDays);
 
         return differenceInDays;
     }
+
     useEffect(() => {
         const intervalId = setInterval(() => {
             setFilteredStudents(prevStudents => {
@@ -203,12 +211,11 @@ const ViewStudent = () => {
                 });
                 return updatedStudents;
             });
-        }, 86400000); // updates every 24 hours
-
+        }, 86400000);
         return () => clearInterval(intervalId);
     }, [filteredStudents]);
     const handleConvertToEmployee = async (student) => {
-        console.log(student);
+        // console.log(student, "convert");
         try {
             const response = await dispatch(convertStudentToEmployeeData(student));
             if (response.payload.message === "Employee data received successfully") {
@@ -218,11 +225,12 @@ const ViewStudent = () => {
                 const incrementedIdNumber = employeeIdNumber + 1;
                 const nextEmployeeId = `${employeeIdText}-${incrementedIdNumber}`;
                 localStorage.setItem("currentEmployeeId", nextEmployeeId);
+                alert("Added to Employee");
             }
-            // console.log(response);
         }
         catch (error) {
-            console.error("Error:", error);
+            // console.error("Error:", error);
+            alert("Employee Id must be registered in MASTER")
         }
     }
 
@@ -284,7 +292,7 @@ const ViewStudent = () => {
                                             onClick={handleFilterMenuOpen}
                                             style={{ color: "#545453", fontWeight: "bold", textTransform: "capitalize", fontSize: ".9rem" }}
                                         >
-                                            Bill Due
+                                            Due
                                         </Button>
                                         <Menu
                                             id="filter-menu"
@@ -335,7 +343,7 @@ const ViewStudent = () => {
                                             ) : (
                                                 <TableCell style={{ color: "#32CD32", fontWeight: "bold" }}>{"No-Due"}</TableCell>
                                             )}
-                                            <TableCell className="btn-grp-table">
+                                            <TableCell className="btn-grp-table" style={{ display: "flex" }}>
                                                 <Tooltip title="Edit">
                                                     <EditIcon className="edit-view-btn" onClick={() => handleEdit(student)} />
                                                 </Tooltip>
@@ -358,8 +366,29 @@ const ViewStudent = () => {
                     </TableContainer>
                 </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <Pagination count={Math.ceil(filteredStudents.length / studentsPerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                <PrevButton
+                    onClick={() => handleChangePage(null, page - 1)}
+                    disabled={page === 1}
+                >
+                    Prev
+                </PrevButton>
+                <ActivePagination
+                    count={Math.ceil(currentStudents.length / studentsPerPage)}
+                    page={page}
+                    onChange={handleChangePage}
+                    variant="outlined"
+                    shape="rounded"
+                    hideNextButton
+                    hidePrevButton
+                />
+
+                <NextButton
+                    onClick={() => handleChangePage(null, page + 1)}
+                    disabled={page === Math.ceil(currentStudents.length / studentsPerPage)}
+                >
+                    Next
+                </NextButton>
             </div>
 
             {

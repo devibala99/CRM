@@ -115,7 +115,7 @@ const AddAttendance = () => {
             {errorMessage && (
                 <Snackbar open={errorSnackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                     <MuiAlert onClose={handleCloseSnackbar} severity='success' sx={{ width: '100%' }}>
-                        Error Occured !!!
+                        Error Occurred !!!
                     </MuiAlert>
                 </Snackbar>
             )}
@@ -126,7 +126,7 @@ const AddAttendance = () => {
                         <select value={attendanceForm.emp_name} onChange={handleInputChange} name='emp_name'>
                             <option value="">Select an employee</option>
 
-                            {employees.map(employee => (
+                            {Array.isArray(employees) && employees.map(employee => (
                                 <option key={employee.id} value={`${employee.firstName} ${employee.lastName}`}>
                                     {`${employee.firstName} ${employee.lastName}`}
                                 </option>
@@ -200,17 +200,17 @@ const AddAttendance = () => {
                         <label>In Date:</label>
                         <input type='date' value={attendanceForm.in_date} onChange={handleInputChange} name='in_date' />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" id="time-input">
                         <label>In Time:</label>
-                        <input type='time' value={attendanceForm.in_time} onChange={handleInputChange} name='in_time' />
+                        <input type='time' value={attendanceForm.in_time} onChange={handleInputChange} name='in_time' min="10:00" max="19:00" />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" >
                         <label>Out Date:</label>
                         <input type='date' value={attendanceForm.out_date} onChange={handleInputChange} name='out_date' />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group" id="time-input">
                         <label>Out Time:</label>
-                        <input type='time' value={attendanceForm.out_time} onChange={handleInputChange} name='out_time' />
+                        <input type='time' value={attendanceForm.out_time} onChange={handleInputChange} name='out_time' min="10:00" max="19:00" />
                     </div>
                     <div className="form-group">
                         <label>Comments:</label>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import Pagination from '@mui/material/Pagination';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,7 +9,7 @@ import WarningModal from '../master/WarningModal';
 import warningSign from "../master/assets/exclamation-mark.png";
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/system';
-
+import Pagination from '@mui/material/Pagination'
 const StyledTableHead = styled(TableHead)({
     backgroundColor: "#D3D3D3",
 });
@@ -20,6 +19,39 @@ const StyledTableCell = styled(TableCell)({
     fontWeight: 'bold',
     fontSize: "15px",
 });
+// Custom styled components for Previous and Next buttons
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 const ViewClient = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredClient, setFilteredClient] = useState([]);
@@ -31,13 +63,27 @@ const ViewClient = () => {
         dispatch(showClients());
     }, [dispatch]);
     useEffect(() => {
-        const filtered = clientsDetail.filter(client =>
-            client.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            client.address.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredClient(filtered);
+        if (clientsDetail.length > 0) {
+            const filtered = clientsDetail.filter(client =>
+                client.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                client.address.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredClient(filtered);
+        }
+        else {
+            setFilteredClient([]);
+        }
     }, [clientsDetail, searchTerm]);
 
+    function formattedDate(dateValue) {
+        if (!dateValue) return '';
+        const dateObj = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+        if (isNaN(dateObj.getTime())) return '';
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${day}-${month}-${year}`;
+    }
     // delete warning modal
     const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
     const [fieldToDelete, setFieldToDelete] = useState(null);
@@ -45,7 +91,7 @@ const ViewClient = () => {
 
     const handleDeleteClick = (client) => {
         setIsWarningModalOpen(true);
-        console.log(client.id);
+        // console.log(client.id);
         setFieldToDelete(client.id);
         setClientFirstName(client.clientName);
     };
@@ -53,21 +99,21 @@ const ViewClient = () => {
         setIsWarningModalOpen(false);
     };
     const confirmDelete = (fieldToDelete) => {
-        console.log(`Deleting field with ID: ${fieldToDelete}`);
+        // console.log(`Deleting field with ID: ${fieldToDelete}`);
         dispatch(deleteClient(fieldToDelete));
         setIsWarningModalOpen(false);
         window.location.reload();
     };
     // pagination
-    const clientsPerPage = 5;
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
+    const clientsPerPage = 10;
     const indexOfLastClient = page * clientsPerPage;
     const indexOfFirstClient = indexOfLastClient - clientsPerPage;
     const currentClients = filteredClient.slice(indexOfFirstClient, indexOfLastClient);
     currentClients.reverse();
 
-    const handlePageChange = (event, value) => {
-        setPage(value);
-    };
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -89,7 +135,7 @@ const ViewClient = () => {
             <div className="table-view">
                 <input
                     className="input-table-search"
-                    placeholder="Search"
+                    placeholder="Search By Client Name"
                     variant="outlined"
                     value={searchTerm}
                     onChange={handleSearch}
@@ -100,7 +146,8 @@ const ViewClient = () => {
                         <Table>
                             <StyledTableHead>
                                 <TableRow >
-                                    <StyledTableCell >Client Name</StyledTableCell>
+                                    <StyledTableCell >#</StyledTableCell>
+                                    <StyledTableCell >Name</StyledTableCell>
                                     <StyledTableCell>Address</StyledTableCell>
                                     <StyledTableCell>Date</StyledTableCell>
                                     <StyledTableCell>State</StyledTableCell>
@@ -119,19 +166,18 @@ const ViewClient = () => {
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    currentClients.map((Client) => (
+                                    currentClients.map((Client, index) => (
                                         <TableRow key={Client.id}>
+                                            <TableCell>{index + 1}</TableCell>
                                             <TableCell>{Client.clientName}</TableCell>
                                             <TableCell>{Client.address}</TableCell>
-                                            <TableCell className="no-wrap">{Client.date}</TableCell>
+                                            <TableCell className="no-wrap">{formattedDate(Client.date)}</TableCell>
                                             <TableCell>{Client.state}</TableCell>
                                             <TableCell>{Client.phoneNumber}</TableCell>
                                             <TableCell>{Client.inVoice_no}</TableCell>
                                             <TableCell>{Client.gst_in}</TableCell>
-                                            <TableCell>
-                                                <Button onClick={() => handleDeleteClick(Client)}>
-                                                    <DeleteIcon style={{ color: "#9a9a9a" }} />
-                                                </Button>
+                                            <TableCell align='center'>
+                                                <DeleteIcon style={{ color: "#fff", fontSize: "1.6rem", backgroundColor: "#fc544b", padding: "4px", borderRadius: "4px", cursor: "pointer" }} onClick={() => handleDeleteClick(Client)} />
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -141,9 +187,32 @@ const ViewClient = () => {
                     </TableContainer>
                 </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <Pagination count={Math.ceil(filteredClient.length / clientsPerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                <PrevButton
+                    onClick={() => handleChangePage(null, page - 1)}
+                    disabled={page === 1}
+                >
+                    Prev
+                </PrevButton>
+                <ActivePagination
+                    count={Math.ceil(filteredClient.length / clientsPerPage)}
+                    page={page}
+                    onChange={handleChangePage}
+                    variant="outlined"
+                    shape="rounded"
+                    hideNextButton
+                    hidePrevButton
+                />
+
+                <NextButton
+                    onClick={() => handleChangePage(null, page + 1)}
+                    disabled={page === Math.ceil(filteredClient.length / clientsPerPage)}
+                >
+                    Next
+                </NextButton>
             </div>
+
+
             {
                 isWarningModalOpen && (
                     <WarningModal isOpen={isWarningModalOpen} onClose={handleCancel} fieldToDelete={fieldToDelete}>

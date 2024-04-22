@@ -11,12 +11,14 @@ import "./addStudent.css"
 import { Link } from 'react-router-dom';
 import { fetchCourse } from "../features/courseSlice";
 import { getStaffDetails } from '../features/staffSlice';
+import { showStudents } from '../features/studentsSlice';
 
 const AddStudent = () => {
     const { studentId: initialStudentId } = useParams();
     const dispatch = useDispatch();
-    const courseEntries = useSelector(state => state.courses.courseEntries);
-    const staffDetails = useSelector(state => state.staffDetails.staffDetailEntries)
+    const courseEntries = useSelector(state => (state.courses?.courseEntries) ?? []);
+    const staffDetails = useSelector(state => state.staffDetails.staffDetailEntries);
+    const studentDetailsFetch = useSelector(state => (state.students.entries) ?? []);
     useEffect(() => {
         const storedCourseEntries = localStorage.getItem('courseFields');
         dispatch(getStaffDetails());
@@ -78,7 +80,7 @@ const AddStudent = () => {
         workExperience: '',
         course: '',
         totalAmount: 0,
-        paidAmount: 0,
+        // paidAmount: 0,
         remainingAmount: 0,
         doj: "",
         studentStatus: '',
@@ -93,7 +95,8 @@ const AddStudent = () => {
             setStudentDetails({
                 ...studentDetails,
                 course: selectedCourse,
-                totalAmount: selectedEntry.courseFees
+                totalAmount: selectedEntry.courseFees,
+                remainingAmount: selectedEntry.courseFees,
             });
         } else {
             setStudentDetails({
@@ -109,10 +112,10 @@ const AddStudent = () => {
         const { name, value, files } = e.target;
         let updatedStudentDetails = { ...studentDetails, [name]: value };
 
-        if (name === "totalAmount" || name === "paidAmount") {
+        if (name === "totalAmount") {
             const totalAmount = parseFloat(updatedStudentDetails.totalAmount || 0);
-            const paidAmount = parseFloat(updatedStudentDetails.paidAmount || 0);
-            updatedStudentDetails.remainingAmount = totalAmount - paidAmount;
+            // const paidAmount = parseFloat(updatedStudentDetails.paidAmount || 0);
+            updatedStudentDetails.remainingAmount = totalAmount;
         } else if (name === "studentImage") {
             updatedStudentDetails[name] = files[0];
         }
@@ -134,6 +137,14 @@ const AddStudent = () => {
     }
     const handleStudentSubmit = async () => {
         try {
+            // Check if contactNumber1 already exists
+            const contactNumberExists = studentDetailsFetch.some(student => student.contactNumber1 === studentDetails.contactNumber1);
+            console.log(studentDetailsFetch, "getch");
+            if (contactNumberExists) {
+                alert("Contact number already exists in the database.");
+                return;
+            }
+
             const formData = new FormData();
 
             for (const key in studentDetails) {
@@ -148,13 +159,13 @@ const AddStudent = () => {
                 setSuccessMessage(true);
                 setErrorMessage("");
 
-                // update student id
+                // Update student id
                 const nextStudentIdNumber = currentStudentIdNumber + 1;
                 const fullStudentId = `${currentStudentIdText}-${nextStudentIdNumber}`;
                 setCurrentStudentIdText(fullStudentId.split("-")[0]);
                 setCurrentStudentIdNumber(nextStudentIdNumber);
                 localStorage.setItem('currentStudentId', fullStudentId);
-
+                console.log("Id::::", localStorage.getItem("currentStudentId"))
                 setStudentDetails({
                     studentId: `${fullStudentId}` || localStorage.getitem("currentStudentId") || 'Set Student Id In Master',
                     firstName: '',
@@ -226,7 +237,7 @@ const AddStudent = () => {
         setIsUg(false);
         setIsPg(false);
         const splitQualification = selectedQualification.split(",");
-        console.log(splitQualification, selectedQualification);
+        // console.log(splitQualification, selectedQualification);
 
         splitQualification.forEach(qualification => {
             const trimmedQualification = qualification.trim();
@@ -339,11 +350,11 @@ const AddStudent = () => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="contactNumber1">Contact Number: <span style={{ color: "Red" }}>*</span></label>
-                        <input type="tel" id="contactNumber1" name="contactNumber1" pattern="[0-9]{10}" value={studentDetails.contactNumber1} onChange={handleInputChange} required />
+                        <input type="tel" id="contactNumber1" name="contactNumber1" minLength="10" maxLength="10" value={studentDetails.contactNumber1} onChange={handleInputChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="contactNumber2">Alternate Number:</label>
-                        <input type="tel" id="contactNumber2" name="contactNumber2" pattern="[0-9]{10}" value={studentDetails.contactNumber2} onChange={handleInputChange} />
+                        <input type="tel" id="contactNumber2" name="contactNumber2" minLength="10" maxLength="10" value={studentDetails.contactNumber2} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
                         <label>Gender: <span style={{ color: "Red" }}>*</span></label>
@@ -665,12 +676,13 @@ const AddStudent = () => {
                     <div className="form-group">
                         <label htmlFor="course">Course: <span style={{ color: "Red" }}>*</span></label>
                         <select id="course" name="course" value={studentDetails.course} onChange={handleCourseFees}>
-                            <option value="">Select Course </option>
-                            {courseEntries.map(entry => (
+                            <option value="">Select Course</option>
+                            {Array.isArray(courseEntries) && courseEntries.map(entry => (
                                 <option key={entry.course} value={entry.course}>{entry.course}</option>
                             ))}
                         </select>
                     </div>
+
                     <div className="form-group">
                         <label htmlFor="totalAmount">Total Amount: <span style={{ color: "Red" }}>*</span></label>
                         <input
@@ -682,16 +694,7 @@ const AddStudent = () => {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="paidAmount">Paid Amount: <span style={{ color: "Red" }}>*</span></label>
-                        <input
-                            type="number"
-                            id="paidAmount"
-                            name="paidAmount"
-                            value={studentDetails.paidAmount}
-                            onChange={handleInputChange}
-                        />
-                    </div>
+
                     <div className="form-group">
                         <label htmlFor="remainingAmount">Remaining Amount:</label>
                         <input
@@ -749,3 +752,13 @@ const AddStudent = () => {
 };
 
 export default AddStudent;
+// <div className="form-group">
+//                         <label htmlFor="paidAmount">Paid Amount: <span style={{ color: "Red" }}>*</span></label>
+//                         <input
+//                             type="number"
+//                             id="paidAmount"
+//                             name="paidAmount"
+//                             value={studentDetails.paidAmount}
+//                             onChange={handleInputChange}
+//                         />
+//                     </div>

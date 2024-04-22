@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getCashoutReceipts, deleteCashoutReceipt } from '../features/cashoutReceiptsSlice';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Tooltip, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Paper } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import Pagination from '@mui/material/Pagination';
 import { styled } from '@mui/system';
 import WarningModal from '../master/WarningModal';
 import warningSign from "../master/assets/exclamation-mark.png";
@@ -12,6 +11,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import DetailsModal from './DetailsModal';
+import Pagination from '@mui/material/Pagination'
+
 const StyledTableHead = styled(TableHead)({
     backgroundColor: "#D3D3D3",
 });
@@ -25,7 +26,39 @@ const StyledTableCell = styled(TableCell)({
 const StyledTableRow = styled(TableRow)({
     height: '15px',
 });
+// Custom styled components for Previous and Next buttons
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
 
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 const Cashout = () => {
     const dispatch = useDispatch();
     const [filteredCashoutReceipts, setFilteredCashoutReceipts] = useState([]);
@@ -60,10 +93,9 @@ const Cashout = () => {
     };
     const handleDisplayModalOpen = (person) => {
         setSelectedPerson(person);
-        console.log(person);
         setShowModal(true);
     };
-    const handlePageChange = (event, value) => {
+    const handleChangePage = (event, value) => {
         setPage(value);
     };
 
@@ -144,16 +176,12 @@ const Cashout = () => {
                                                 <TableCell>{receipt.remainingAmount}</TableCell>
                                                 <TableCell>{receipt.billDate}</TableCell>
                                                 <TableCell>{receipt.paymentType}</TableCell>
-                                                <TableCell>
+                                                <TableCell align="center">
                                                     <Tooltip title="Display Receipt">
-                                                        <Button onClick={() => handleDisplayModalOpen(receipt)}>
-                                                            <VisibilityIcon style={{ color: "#9a9a9a" }} />
-                                                        </Button>
+                                                        <VisibilityIcon onClick={() => handleDisplayModalOpen(receipt)} className="display-view-btn" />
                                                     </Tooltip>
                                                     <Tooltip title="Delete">
-                                                        <Button onClick={() => handleDeleteClick(receipt._id)}>
-                                                            <DeleteIcon style={{ color: "#9a9a9a" }} />
-                                                        </Button>
+                                                        <DeleteIcon onClick={() => handleDeleteClick(receipt._id)} className="delete-view-btn" />
                                                     </Tooltip>
                                                 </TableCell>
                                             </StyledTableRow>
@@ -165,9 +193,31 @@ const Cashout = () => {
                         </Table>
                     </TableContainer>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                    <Pagination count={Math.ceil(filteredCashoutReceipts.length / cashoutReceiptsPerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                    <PrevButton
+                        onClick={() => handleChangePage(null, page - 1)}
+                        disabled={page === 1}
+                    >
+                        Prev
+                    </PrevButton>
+                    <ActivePagination
+                        count={Math.ceil(filteredCashoutReceipts.length / cashoutReceiptsPerPage)}
+                        page={page}
+                        onChange={handleChangePage}
+                        variant="outlined"
+                        shape="rounded"
+                        hideNextButton
+                        hidePrevButton
+                    />
+
+                    <NextButton
+                        onClick={() => handleChangePage(null, page + 1)}
+                        disabled={page === Math.ceil(filteredCashoutReceipts.length / cashoutReceiptsPerPage)}
+                    >
+                        Next
+                    </NextButton>
                 </div>
+
             </div>
 
             {/* Delete warning modal */}
@@ -189,7 +239,14 @@ const Cashout = () => {
                 showModal && (
                     <DetailsModal isOpen={showModal} onClose={handleCancel}>
                         <div className="view-modal-container">
-                            <h1>Cash In</h1>
+                            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                                <div>
+                                    <h1>Cash In</h1>
+                                </div>
+                                <div>
+                                    <h2 className='cancel-model-btn' onClick={handleCancel}>X</h2>
+                                </div>
+                            </div>
                             <div className="modal-flex" style={{ border: "1px solid rgba(159, 159, 159, 0.497)" }}>
                                 <div className="left-container">
                                     <p>Vendor Name</p>

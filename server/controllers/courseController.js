@@ -34,7 +34,7 @@ const createCourse = async (req, res) => {
 const updateCourse = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log(req.params);
+        // console.log(req.params);
         const { course, courseFees, duration } = req.body;
         const updatedCourse = await Courses.findByIdAndUpdate(id, { course, courseFees, duration }, { new: true });
         if (!updatedCourse) {

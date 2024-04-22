@@ -1,0 +1,86 @@
+.date-range_column {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(159, 159, 159, 0.497);
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow-x: hidden;
+
+}
+
+.column-segment {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+}
+
+.head-title-seg h2 {
+    color: #0090dd;
+    border-bottom: 1px solid rgba(159, 159, 159, 0.497);
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+.short-tags {
+    display: flex;
+    flex-direction: row;
+    margin: 0 1rem 0 0;
+    padding: 1rem;
+    width: 60%;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.short-tags button {
+    border: none;
+    outline: none;
+    /* background-color: #D3D3D3; */
+    /* color: #545453; */
+    background-color: #0090dd;
+    color: white;
+    font-size: .9rem;
+    /* font-weight: 600; */
+    width: 110px;
+    padding: .5rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.short-tags button:hover {
+    background-color: #0090dd;
+    color: white;
+}
+
+.calendar-inputs {
+    width: 40%;
+    display: flex;
+    gap: 20px;
+    padding: 1rem;
+    padding-right: 1.5rem;
+}
+
+.individual-date-set {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 50%;
+}
+
+.individual-date-set label {
+    color: #545453;
+}
+
+.custom-datepicker {
+    padding: .5rem;
+    border: 1px solid rgba(159, 159, 159, 0.497);
+    width: 200px;
+    border-radius: 4px;
+}
+
+.custom-datepicker input::placeholder {
+    letter-spacing: 1px;
+}

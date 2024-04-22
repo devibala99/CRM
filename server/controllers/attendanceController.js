@@ -80,7 +80,7 @@ const deleteAttendance = async (req, res) => {
     try {
         const { id } = req.params;
         const deletedAttendance = await Attendance.findByIdAndDelete(id);
-        console.log(id);
+        // console.log(id);
         if (!deletedAttendance) {
             return res.status(404).json({ message: 'Attendance record not found' });
         }

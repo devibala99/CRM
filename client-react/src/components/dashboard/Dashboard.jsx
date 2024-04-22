@@ -16,7 +16,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         let lastScrollTop = 0;
-        const threshold = 50; // Adjust this value as needed
+        const threshold = 50;
 
         const handleScroll = () => {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;

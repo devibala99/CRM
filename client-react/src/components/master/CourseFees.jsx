@@ -1,4 +1,5 @@
-
+/* eslint-disable no-unused-vars */
+// /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import { Link } from 'react-router-dom';
@@ -6,26 +7,32 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import WarningModal from './WarningModal';
 import warningSign from "./assets/exclamation-mark.png";
 import "./masterStyle.css"
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { createCourse, deleteCourse, fetchCourse, updateCourse } from "../features/courseSlice";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { Edit } from '@mui/icons-material';
+
 const CourseFees = () => {
     const dispatch = useDispatch();
-    const courseFields = useSelector(state => state.courses.courseEntries || []);
     const [dynamicFields, setDynamicFields] = useState([]);
+    // const selectCourseEntries = (state => state.courses.courseEntries) || [];
+
+    // const courseFields = useSelector(selectCourseEntries);
+    // console.log(typeof (courseFields), courseFields);
 
     useEffect(() => {
-        const fetchCourseData = async () => {
+        const fetchDataAndLocalStorage = async () => {
             try {
                 const { payload } = await dispatch(fetchCourse());
-                setDynamicFields(payload);
+                setDynamicFields(payload || []);
+                localStorage.setItem('courseFields', JSON.stringify(payload || []));
             } catch (error) {
                 console.error('Error fetching course data:', error);
             }
         };
-        fetchCourseData();
+
+        fetchDataAndLocalStorage();
     }, [dispatch]);
 
     const [editModal, setEditModal] = useState(false);
@@ -33,19 +40,17 @@ const CourseFees = () => {
     const [fieldToEdit, setFieldToEdit] = useState(null);
     const [fieldToDelete, setFieldToDelete] = useState(null);
     const [newFieldCount, setNewFieldCount] = useState(0);
-    useEffect(() => {
-        dispatch(fetchCourse());
-    }, [dispatch]);
-    useEffect(() => {
-        localStorage.setItem('courseFields', JSON.stringify(dynamicFields));
-    }, [dynamicFields]);
-
     const addDynamicField = () => {
-        const newField = { course: '', courseFees: '' };
-        setDynamicFields(prevFields => [...prevFields, newField]);
+        const newField = { course: '', courseFees: '', duration: '' };
+        setDynamicFields(prevFields => {
+            if (!Array.isArray(prevFields)) {
+                return [newField];
+            }
+            return [...prevFields, newField];
+        });
         setNewFieldCount(newFieldCount + 1);
-        handleSaveToRedux([...dynamicFields, newField]);
     };
+
 
     const handleFieldChange = (index, key, value) => {
         const updatedFields = [...dynamicFields];
@@ -54,18 +59,16 @@ const CourseFees = () => {
     };
 
     const handleDeleteField = (index) => {
-        console.log("Deleting field at index:", index);
-        setFieldToDelete(index);
         setShowModal(true);
+        setFieldToDelete(dynamicFields[index]);
     };
+
     const handleEditField = (index) => {
-        const updatedField = dynamicFields[index];
         setEditModal(true);
-        setFieldToEdit(updatedField);
-    }
+        setFieldToEdit(dynamicFields[index]);
+    };
 
     const confirmEdit = async () => {
-        console.log(fieldToEdit);
         try {
             if (fieldToEdit && fieldToEdit.courseId) {
                 await dispatch(updateCourse({ courseId: fieldToEdit.courseId, courseData: fieldToEdit }));
@@ -80,12 +83,9 @@ const CourseFees = () => {
     const confirmDelete = async (courseToDelete) => {
         try {
             if (courseToDelete && courseToDelete.courseId) {
-                console.log("Course ID to delete:", courseToDelete.courseId);
                 const updatedFields = dynamicFields.filter(field => field.course !== courseToDelete.course);
                 localStorage.setItem('courseFields', JSON.stringify(updatedFields));
-
                 await dispatch(deleteCourse(courseToDelete.courseId));
-
                 setShowModal(false);
                 window.location.reload();
             }
@@ -98,16 +98,24 @@ const CourseFees = () => {
         setShowModal(false);
         setEditModal(false);
     };
-
     const handleSaveToRedux = () => {
+        console.log("Save clicked");
         if (newFieldCount > 0) {
             const newFields = dynamicFields.slice(-newFieldCount);
-            newFields.forEach(field => {
-                dispatch(createCourse({ course: field.course, courseFees: field.courseFees, duration: field.duration }));
-            });
-            setNewFieldCount(0);
+            const isAnyFieldEmpty = newFields.some(field => !field.course || !field.courseFees || !field.duration);
+
+            if (isAnyFieldEmpty) {
+                alert("Warning: Input fields should not be empty");
+            } else {
+                newFields.forEach(field => {
+                    dispatch(createCourse({ course: field.course, courseFees: field.courseFees, duration: field.duration }));
+                });
+                setNewFieldCount(0);
+                window.location.reload();
+            }
         }
     };
+
 
     return (
         <div className="student-container">
@@ -125,9 +133,7 @@ const CourseFees = () => {
                 </div>
             </div>
             <div className="master-field">
-                {!dynamicFields || dynamicFields.length === 0 ? (
-                    <p style={{ width: "100%", textAlign: "center" }}>Plan your courses and their prices</p>
-                ) : (
+                {dynamicFields && dynamicFields.length > 0 ? (
                     dynamicFields.map((field, index) => (
                         <div className="form-group-master" key={index}>
                             <div className="first-input">
@@ -137,6 +143,7 @@ const CourseFees = () => {
                                     id={`course_${index}`}
                                     value={field.course}
                                     onChange={e => handleFieldChange(index, 'course', e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="second-input">
@@ -146,6 +153,7 @@ const CourseFees = () => {
                                     id={`courseFees_${index}`}
                                     value={field.courseFees}
                                     onChange={e => handleFieldChange(index, 'courseFees', e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="third-input">
@@ -155,17 +163,20 @@ const CourseFees = () => {
                                     id={`duration_${index}`}
                                     value={field.duration}
                                     onChange={e => handleFieldChange(index, 'duration', e.target.value)}
+                                    required
                                 />
                             </div>
                             <div className="fourth-input">
                                 <button onClick={() => handleEditField(index)} className="editButton-master"><Edit /></button>
                                 <button onClick={handleSaveToRedux} className="saveButton-master"><SaveOutlinedIcon /></button>
-                                <button onClick={() => handleDeleteField(courseFields[index])} className='deleteButton-master'>
+                                <button onClick={() => handleDeleteField(index)} className='deleteButton-master'>
                                     <DeleteOutlineOutlinedIcon />
                                 </button>
                             </div>
                         </div>
                     ))
+                ) : (
+                    <p style={{ width: "100%", textAlign: "center" }}>Plan your courses and their prices</p>
                 )}
             </div>
             <div className="btn-class-master">
@@ -210,7 +221,7 @@ const CourseFees = () => {
                             />
                         </div>
                         <div className="buttonsContainer">
-                            <button onClick={() => confirmEdit(fieldToEdit)} className="editButton-blue">Edit</button>
+                            <button onClick={confirmEdit} className="editButton-blue">Edit</button>
                             <button onClick={handleCancel} className="cancelButton-blue">Cancel</button>
                         </div>
                     </div>

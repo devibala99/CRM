@@ -24,7 +24,6 @@ const DashboardCalendar = () => {
         if (event) {
             setTooltip(event);
         }
-        console.log("tool--", tooltip)
     };
 
     const handleMouseLeave = () => {

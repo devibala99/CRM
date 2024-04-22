@@ -14,6 +14,8 @@ const postStudentReceipt = async (req, res) => {
             bankPaymentType,
             onlinePaymentGateway,
             chequeNumber,
+            course,
+            duration,
             comments
         } = req.body;
 
@@ -28,10 +30,13 @@ const postStudentReceipt = async (req, res) => {
             bankPaymentType,
             onlinePaymentGateway,
             chequeNumber,
+            course,
+            duration,
             comments
         });
 
         const savedReceipt = await newStudentReceipt.save();
+        // console.log(savedReceipt, "receipt");
         res.status(201).json(savedReceipt);
     } catch (error) {
         res.status(400).json({ message: error.message });

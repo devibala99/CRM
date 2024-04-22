@@ -12,9 +12,11 @@ import { getStaffDetails } from '../features/staffSlice';
 import "./addStudent.css"
 const EditStudentModal = ({ selectedStudent, onClose }) => {
     const [editedStudent, setEditedStudent] = useState(selectedStudent);
-    const courseEntries = useSelector(state => state.courses.courseEntries);
+    console.log("Editable srudens=-===", editedStudent);
+    const courseEntries = useSelector(state => state.courses.courseEntries) || [];
     const staffDetails = useSelector(state => state.staffDetails.staffDetailEntries)
 
+    console.log("Course Entries----", courseEntries);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const dispatch = useDispatch();
     const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false);
@@ -31,11 +33,11 @@ const EditStudentModal = ({ selectedStudent, onClose }) => {
     const [isPg, setIsPg] = useState(false);
     const [isPhd, setIsPhd] = useState(false);
     useEffect(() => {
-        const storedCourseEntries = localStorage.getItem('courseFields');
+        // const storedCourseEntries = localStorage.getItem('courseFields');
         dispatch(getStaffDetails());
-        if (storedCourseEntries) {
-            dispatch(fetchCourse());
-        }
+
+        dispatch(fetchCourse());
+
     }, [dispatch])
     if (!selectedStudent) {
         return null;
@@ -68,22 +70,35 @@ const EditStudentModal = ({ selectedStudent, onClose }) => {
         console.log(year, month, day);
         return `${year}-${month}-${day}`;
     };
+    // const handleInputChange = (e) => {
+    //     const { name, value } = e.target;
+    //     if (name === "totalAmount") {
+    //         setEditedStudent({
+    //             ...editedStudent,
+    //             [name]: value,
+    //             remainingAmount: (parseInt(value) || courseFees)
+    //         });
+    //     }
+    // };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        // Check if the changed field is 'totalAmount'
         if (name === "totalAmount") {
+            // Update 'totalAmount' and calculate 'remainingAmount' based on 'courseFees'
             setEditedStudent(prevState => ({
                 ...prevState,
                 [name]: value,
-                remainingAmount: (parseInt(value) || courseFees) - parseInt(prevState.paidAmount)
+                remainingAmount: (parseInt(value) || courseFees)
             }));
         } else {
+            // For other fields, simply update the state
             setEditedStudent(prevState => ({
                 ...prevState,
-                [name]: value,
-                remainingAmount: name === 'paidAmount' ? (parseInt(prevState.totalAmount) || courseFees) - parseInt(value) : prevState.remainingAmount
+                [name]: value
             }));
         }
     };
+
     const handleImageChange = (e) => {
         setEditedStudent({ ...editedStudent, studentImage: e.target.files[0] });
     };
@@ -130,7 +145,7 @@ const EditStudentModal = ({ selectedStudent, onClose }) => {
         formData.append('workExperience', editedStudent.workExperience);
         formData.append('course', editedStudent.course);
         formData.append('totalAmount', editedStudent.totalAmount);
-        formData.append('paidAmount', editedStudent.paidAmount);
+        // formData.append('paidAmount', editedStudent.paidAmount);
         formData.append('remainingAmount', editedStudent.remainingAmount);
         formData.append('doj', editedStudent.doj);
         formData.append('mentor', editedStudent.mentor);
@@ -177,7 +192,7 @@ const EditStudentModal = ({ selectedStudent, onClose }) => {
                 workExperience: '',
                 course: '',
                 totalAmount: 0,
-                paidAmount: '',
+                // paidAmount: '',
                 remainingAmount: '',
                 doj: "",
                 mentor: "",
@@ -514,13 +529,10 @@ const EditStudentModal = ({ selectedStudent, onClose }) => {
                         <input type="number" name="totalAmount" value={editedStudent.totalAmount}
                             onChange={handleInputChange} />
                     </div>
-                    <div className="form-group">
-                        <label>Paid Amount:</label>
-                        <input type="number" name="paidAmount" value={editedStudent.paidAmount} onChange={handleInputChange} />
-                    </div>
+
                     <div className="form-group">
                         <label>Remaining Amount:</label>
-                        <input type="text" value={editedStudent.remainingAmount} readOnly />
+                        <input type="text" value={editedStudent.remainingAmount} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="mentor">Mentor:</label>
@@ -581,3 +593,8 @@ const EditStudentModal = ({ selectedStudent, onClose }) => {
 };
 
 export default EditStudentModal;
+
+// <div className="form-group">
+//                         <label>Paid Amount:</label>
+//                         <input type="number" name="paidAmount" value={editedStudent.paidAmount} onChange={handleInputChange} />
+//                     </div>

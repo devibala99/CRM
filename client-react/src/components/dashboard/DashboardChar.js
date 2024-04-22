@@ -1,90 +1,89 @@
-import React, { useEffect } from 'react';
-import { Bar, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend, ArcElement } from "chart.js";
-import "./dashboard.css"
-import { showEmployees } from '../features/employeesSlice';
+import React, { useEffect, useState } from 'react';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { showStudents } from '../features/studentsSlice';
-import { showClients } from "../features/clientSlice";
-import { showInvoice } from '../features/invoiceSlice';
 import { useDispatch, useSelector } from 'react-redux';
-ChartJS.register(
-    BarElement, Tooltip, Legend, CategoryScale, LinearScale, ArcElement
-)
-const DashboardChart = () => {
+import { fetchCourse } from "../features/courseSlice";
 
-    const employees = useSelector(state => state.employees.employeeEntries) || [];
-    const students = useSelector(state => state.students.entries) || [];
-    const clients = useSelector(state => state.clients.clientEntries) || [];
-    const invoiceDetails = useSelector(state => state.invoices.invoiceEntries) || []; // Update to invoiceEntries
+ChartJS.register(
+    ArcElement, Tooltip, Legend
+);
+
+const getRandomColor = (index) => {
+    const colors = ['#3ba2eb', '#ffd966', "#68DCE0", '#ff758d', '#88d8b0', '#ff7f50'];
+    return colors[index % colors.length];
+};
+
+const DashboardChart = () => {
+    const studentsData = useSelector(state => state.students.entries) || [];
+    const courses = useSelector(state => (state.courses.courseEntries) ?? []);
     const dispatch = useDispatch();
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
     useEffect(() => {
-        dispatch(showEmployees());
         dispatch(showStudents());
-        dispatch(showClients());
-        dispatch(showInvoice());
+        dispatch(fetchCourse());
     }, [dispatch]);
 
-    const barData = {
-        labels: ['January', "February", "March", "April", "May", "June"],
-        datasets: [
-            {
-                label: "Rate",
-                data: [3, 6, 4, 8, 2, 1],
-                backgroundColor: "#2196f3",
-                borderWidth: 0,
-                borderColor: "black",
-            }
-        ]
+    const filteredStudentsData = Array.isArray(studentsData) ? studentsData.filter(student => {
+        const studentYear = new Date(student.doj).getFullYear();
+        return studentYear === selectedYear;
+    }) : [];
+
+    let pieData = {};
+
+    if (courses.length > 0 && filteredStudentsData.length > 0) {
+        pieData = {
+            labels: courses.map(data => data.course),
+            datasets: [{
+                data: courses.map(data => {
+                    return filteredStudentsData.filter(student => student.course === data.course).length;
+                }),
+                backgroundColor: courses.map((data, index) => getRandomColor(index)),
+                hoverBackgroundColor: courses.map((data, index) => getRandomColor(index)),
+            }],
+        };
+    } else {
+        // If no data is available--default empty data for the chart
+        pieData = {
+            labels: ['No Data Available'],
+            datasets: [{
+                data: [1],
+                backgroundColor: ['rgba(0, 0, 0, 0)'],
+                hoverBackgroundColor: ['rgba(0, 0, 0, 0)'],
+            }],
+        };
     }
 
-    const pieData = {
-        labels: ['Students', 'Employee', 'Clients', 'Invoices'],
-        datasets: [
-            {
-                data: [students.length, employees.length, clients.length, invoiceDetails.length],
-                backgroundColor: ['#3ba2eb', '#ffd966', "#68DCE0", '#ff758d'],
-                hoverBackgroundColor: ['#2ca0ef', '#FFCE56', "#68DCE0", '#ff758d'],
-            },
-        ],//#088f8f
+    const pieOptions = {
+        radius: '70%',
     };
 
-    const barOptions = {
-        scales: {
-            y: {
-                beginAtZero: true,
-            },
-        },
+    const years = [];
+    const currentYear = new Date().getFullYear();
+    for (let year = 2016; year <= currentYear; year++) {
+        years.push(year);
     }
-    const pieOptions = {
 
-        radius: '70%',
-    }
     return (
-
         <div className="two-charts">
-            <div className="barChart" style={{
-
-                border: "1px solid rgba(159, 159, 159, 0.497)",
-                borderRadius: "15px"
-            }}>
-                <h3 style={{ color: "var(--icon-color)" }}>Rate of Project</h3>
-                <Bar
-                    data={barData}
-                    options={barOptions}
-                >
-
-                </Bar>
-            </div>
             <div className="pieChart" style={{
                 border: "1px solid rgba(159, 159, 159, 0.497)",
                 borderRadius: "15px"
             }}>
-                <h3 style={{ color: "var(--icon-color)" }}>Count</h3>
+                <div className="flex-row" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <h3 style={{ color: "var(--icon-color)" }}>Number of Students per Course</h3>
+                    <div style={{ marginLeft: "1rem" }}>
+                        <select value={selectedYear} onChange={(e) => setSelectedYear(parseInt(e.target.value))}>
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
                 <Pie data={pieData} options={pieOptions} />
             </div>
         </div>
-
     );
 };
 

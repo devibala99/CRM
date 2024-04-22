@@ -1,5 +1,4 @@
 const express = require('express');
-const multer = require('multer');
 const ExcelLead = require('../modals/excelModal');
 const router = express.Router();
 
@@ -8,10 +7,10 @@ router.post('/insert_excelFiles', async (req, res, next) => {
         const tests = req.body;
         const insertedDocs = await ExcelLead.insertMany(tests);
 
-        if (insertedDocs) {
+        if (insertedDocs.length > 0) {
             res.status(200).json({ success: true, message: "Insert Successfully" });
         } else {
-            console.log("Insert Error", error);
+            // console.log("Insert Error", error);
             res.status(400).json({
                 success: false,
                 error: error,

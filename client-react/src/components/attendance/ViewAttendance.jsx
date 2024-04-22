@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAttendance, deleteAttendance } from '../features/attendanceSlice';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
-import Pagination from '@mui/material/Pagination';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Tooltip } from '@mui/material';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import WarningModal from '../master/WarningModal';
 import warningSign from "../master/assets/exclamation-mark.png"; import { Link } from 'react-router-dom';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import "./viewAttendance.css"
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Pagination from '@mui/material/Pagination'
 
 import { styled } from '@mui/system';
 
@@ -22,7 +22,39 @@ const StyledTableCell = styled(TableCell)({
     fontWeight: 'bold',
     fontSize: "15px",
 });
+// Custom styled components for Previous and Next buttons
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
 
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 const ViewAttendance = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredAttendance, setFilteredAttendance] = useState([]);
@@ -30,8 +62,10 @@ const ViewAttendance = () => {
     const employeesAttendance = useSelector(state => state.attendance.empAttendance);
 
     const dispatch = useDispatch();
-
-    const attendancePerPage = 5;
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
+    const attendancePerPage = 10;
     const indexOfLastAttendance = page * attendancePerPage;
     const indexOfFirstEmployee = indexOfLastAttendance - attendancePerPage;
     const currentAttendance = filteredAttendance.slice(indexOfFirstEmployee, indexOfLastAttendance);
@@ -46,7 +80,11 @@ const ViewAttendance = () => {
         );
         setFilteredAttendance(filtered);
     }, [employeesAttendance, searchTerm]);
-
+    const formatDate = (inputDate) => {
+        const parts = inputDate.split('-');
+        const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        return formattedDate;
+    }
     // delete warning modal
     const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
     const [fieldToDelete, setFieldToDelete] = useState(null);
@@ -54,7 +92,7 @@ const ViewAttendance = () => {
 
     const handleDeleteClick = (attendance) => {
         setIsWarningModalOpen(true);
-        console.log(attendance._id);
+        // console.log(attendance._id);
         setFieldToDelete(attendance._id);
         setStudentFirstName(attendance.emp_name);
     };
@@ -62,7 +100,7 @@ const ViewAttendance = () => {
         setIsWarningModalOpen(false);
     };
     const confirmDelete = (fieldToDelete) => {
-        console.log(`Deleting field with ID: ${fieldToDelete}`);
+        // console.log(`Deleting field with ID: ${fieldToDelete}`);
         dispatch(deleteAttendance(fieldToDelete));
         setIsWarningModalOpen(false);
         window.location.reload();
@@ -126,15 +164,15 @@ const ViewAttendance = () => {
                                             <TableCell>{employee.status_work}</TableCell>
                                             <TableCell>{employee.permission}</TableCell>
                                             <TableCell>{employee.leave}</TableCell>
-                                            <TableCell>{employee.in_date}</TableCell>
+                                            <TableCell>{formatDate(employee.in_date)}</TableCell>
                                             <TableCell>{employee.in_time}</TableCell>
-                                            <TableCell>{employee.out_date}</TableCell>
+                                            <TableCell>{formatDate(employee.out_date)}</TableCell>
                                             <TableCell>{employee.out_time}</TableCell>
                                             <TableCell>{employee.comments}</TableCell>
-                                            <TableCell>
-                                                <Button onClick={() => handleDeleteClick(employee)}>
-                                                    <DeleteIcon />
-                                                </Button>
+                                            <TableCell align='center'>
+                                                <Tooltip title="Delete">
+                                                    <DeleteIcon className="delete-view-btn" onClick={() => handleDeleteClick(employee)} />
+                                                </Tooltip>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -150,9 +188,31 @@ const ViewAttendance = () => {
                     </TableContainer>
                 </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <Pagination count={Math.ceil(filteredAttendance.length / attendancePerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                <PrevButton
+                    onClick={() => handleChangePage(null, page - 1)}
+                    disabled={page === 1}
+                >
+                    Prev
+                </PrevButton>
+                <ActivePagination
+                    count={Math.ceil(filteredAttendance.length / attendancePerPage)}
+                    page={page}
+                    onChange={handleChangePage}
+                    variant="outlined"
+                    shape="rounded"
+                    hideNextButton
+                    hidePrevButton
+                />
+
+                <NextButton
+                    onClick={() => handleChangePage(null, page + 1)}
+                    disabled={page === Math.ceil(filteredAttendance.length / attendancePerPage)}
+                >
+                    Next
+                </NextButton>
             </div>
+
             {
                 isWarningModalOpen && (
                     <WarningModal isOpen={isWarningModalOpen} onClose={handleCancel} fieldToDelete={fieldToDelete}>

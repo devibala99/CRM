@@ -8,12 +8,6 @@ import "./addStudent.css"
 
 const DisplayStudentModal = ({ displayModalOpen, selectedStudent, onClose }) => {
 
-    const handleCloseClick = () => {
-        console.log("Close")
-        setTimeout(() => {
-            onClose();
-        }, 1000);
-    }
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
@@ -21,15 +15,14 @@ const DisplayStudentModal = ({ displayModalOpen, selectedStudent, onClose }) => 
     }
 
     return (
-        <Modal open={displayModalOpen} onClose={onClose}>
-            <div className='modal-container'>
-                <Typography variant="h5" className='heading' style={{ borderTopLeftRadius: "25px", borderTopRightRadius: "25px", backgroundColor: "#2196f3", color: "white", width: "100%", textAlign: "center", padding: "0.5rem 0" }}><strong>{selectedStudent.firstName} {selectedStudent.lastName}</strong></Typography>
+        <Modal open={displayModalOpen} onClose={onClose} style={{ border: "none", outline: 'none' }}>
+            <div className='modal-container' style={{ border: "none", outline: 'none' }}>
+                <Typography variant="h5" className='heading' style={{ borderTopLeftRadius: "4px", borderTopRightRadius: "4px", backgroundColor: "#2196f3", color: "white", width: "100%", textAlign: "center", padding: "0.5rem 0" }}><strong>{selectedStudent.firstName} {selectedStudent.lastName}</strong></Typography>
                 <div className='row-container'>
                     <div className="top-container">
                         <div className="image-segment-center">
                             <div className="student-image" style={{ width: "100%" }}>
                                 <div className='field-row'>
-                                    {/*<Typography variant="body1" style={{ color: "#2196f3", paddingBottom: "0rem", width: "100%", textAlign: "left" }}><strong>Student Image</strong></Typography> */}
                                     <a href={selectedStudent.studentImage} target="_blank" rel="noopener noreferrer">
                                         <img src={selectedStudent.studentImage} alt="Student" style={{ width: "250px", height: "190px" }} />
                                     </a>
@@ -37,7 +30,6 @@ const DisplayStudentModal = ({ displayModalOpen, selectedStudent, onClose }) => 
 
                                 <div className='personal-details'>
                                     <div className='field-row'>
-                                        {/* <Typography variant="body1" style={{ color: "#2196f3", paddingBottom: "1rem", width: "100%", textAlign: "left" }}><strong>Personal Details</strong></Typography>* */}
                                     </div>
                                     <div className='field-row'>
                                         <Typography variant="body1"><strong>Student Id</strong></Typography>
@@ -60,7 +52,7 @@ const DisplayStudentModal = ({ displayModalOpen, selectedStudent, onClose }) => 
                                         <Typography variant="body1"> {selectedStudent.motherName}</Typography>
                                     </div>
                                     <div className='field-row'>
-                                        {/*   <Typography variant="body1" style={{ color: "#2196f3", paddingBottom: "1rem", width: "100%", textAlign: "left" }}><strong>Contact Details</strong></Typography>* */}
+
                                     </div>
                                     <div className='field-row'>
                                         <Typography variant="body1"><strong>Date of Birth</strong></Typography>
@@ -231,6 +223,9 @@ const DisplayStudentModal = ({ displayModalOpen, selectedStudent, onClose }) => 
 
                     </div>
                 </div>
+                <Typography variant="h5" className='heading' style={{ borderBottomLeftRadius: "4px", borderBottomRightRadius: "4px", backgroundColor: "#2196f3", color: "white", width: "100%", textAlign: "center", padding: "0.5rem 0", cursor: "pointer" }}
+                    onClick={onClose}><strong>Cancel</strong></Typography>
+
             </div>
         </Modal>
     )

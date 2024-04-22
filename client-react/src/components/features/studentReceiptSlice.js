@@ -19,8 +19,8 @@ export const createReceipt = createAsyncThunk(
     }
 );
 
-export const getReceipts = createAsyncThunk(
-    "studentReceipts/getReceipts",
+export const getStudentReceipts = createAsyncThunk(
+    "studentReceipts/getStudentReceipts",
     async () => {
         try {
             const response = await axios.get(API_FETCH_STUDENT_RECEIPT);
@@ -78,16 +78,16 @@ const studentReceiptsSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
-            .addCase(getReceipts.pending, (state) => {
+            .addCase(getStudentReceipts.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(getReceipts.fulfilled, (state, action) => {
+            .addCase(getStudentReceipts.fulfilled, (state, action) => {
                 state.loading = false;
                 state.studentReceiptEntries = action.payload;
                 state.error = null;
             })
-            .addCase(getReceipts.rejected, (state, action) => {
+            .addCase(getStudentReceipts.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             })

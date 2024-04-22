@@ -4,29 +4,65 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { showInvoice, updateInvoice } from '../features/invoiceSlice';
 import { getReceipts, deleteReceipt } from '../features/customerReceiptSlice';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Tooltip, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Paper } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import Pagination from '@mui/material/Pagination';
 import { styled } from '@mui/system';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import WarningModal from '../master/WarningModal';
 import warningSign from "../master/assets/exclamation-mark.png";
 import DetailsModal from './DetailsModal';
 import "../personInfo/viewTable.css";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import logoKitkat from "../../navigationbar/assets/kitkat-removebg-preview.png"
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
+import Pagination from '@mui/material/Pagination';
 
 const StyledTableHead = styled(TableHead)({
-    backgroundColor: "#0090dd",
+    backgroundColor: "#D3D3D3",
 });
 
 const StyledTableCell = styled(TableCell)({
-    color: 'white',
+    color: '#545453',
     fontWeight: 'bold',
     fontSize: "15px",
 });
 const StyledTableRow = styled(TableRow)({
     height: '15px',
 });
+// Custom styled components for Previous and Next buttons
+const PrevButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
 
+const NextButton = styled('button')({
+    color: '#0090dd',
+    backgroundColor: 'transparent',
+    boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px',
+    borderRadius: '4px',
+    padding: '8px 10px',
+    fontSize: '13px',
+    margin: '0 10px',
+    cursor: 'pointer',
+    border: 'none',
+});
+const ActivePagination = styled(Pagination)(({ theme }) => ({
+    '& .MuiPaginationItem-root': {
+        color: '#000',
+    },
+    '& .MuiPaginationItem-page.Mui-selected': {
+        backgroundColor: '#0090dd',
+        color: '#fff',
+    },
+}));
 const CustomerTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredCustomers, setFilteredCustomers] = useState([]);
@@ -34,10 +70,14 @@ const CustomerTable = () => {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     // Pagination
     const [page, setPage] = useState(1);
-    const customersPerPage = 5;
+    const customersPerPage = 10;
     const indexOfLastCustomer = page * customersPerPage;
     const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
     const currentCustomers = filteredCustomers.slice(indexOfFirstCustomer, indexOfLastCustomer);
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    };
+
     // delete warning modal
     const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
     const [fieldToDelete, setFieldToDelete] = useState(null);
@@ -67,7 +107,7 @@ const CustomerTable = () => {
         setSelectedCustomer(customer);
         setDisplayModalOpen(true);
         setShowModal(true);
-        console.log(customer, "clicked");
+        // console.log(customer, "clicked");
     };
 
     const handlePageChange = (event, value) => {
@@ -76,7 +116,7 @@ const CustomerTable = () => {
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
-        console.log(searchTerm);
+        // console.log(searchTerm);
     };
 
     const handleDeleteClick = (customer) => {
@@ -91,13 +131,88 @@ const CustomerTable = () => {
         setShowModal(false);
     };
 
+    const handlePdfDownload = (customer) => {
+        const { customerName, paymentType, paidAmount, remainingAmount, billDate } = customer;
+
+        // Create new jsPDF instance with A5 format
+        const doc = new jsPDF({
+            format: 'a5',
+            orientation: 'portrait',
+            unit: 'mm',  // set measurement unit to millimeters
+        });
+        const a5PaperHeight = doc.internal.pageSize.height;
+
+        console.log("Height of A5 paper:", a5PaperHeight, "mm");
+        // Set the desired width for the title columns
+        const titleWidth = 25;
+
+        // Set the padding and border color
+        const padding = 10;
+        const borderColor = '#808080';
+
+        // Add border around the content
+        doc.setDrawColor(borderColor);
+        doc.rect(padding, padding, doc.internal.pageSize.width - 2 * padding, doc.internal.pageSize.height - 2 * padding);
+
+        // Add logo aligned left with padding
+        const logoImg = logoKitkat; // Replace with the path to your logo image
+        const logoWidth = 40;
+        const logoHeight = 20;
+        const logoPadding = 5;
+        doc.addImage(logoImg, 'PNG', padding + logoPadding, padding + logoPadding, logoWidth, logoHeight); // Adjust position and size as needed
+
+        // Add two break spaces
+        doc.text('', padding + logoPadding, padding + logoPadding + logoHeight + padding);
+
+        // Add "Bill Acknowledgement" aligned right next to the logo with bold text
+        const textRightMargin = doc.internal.pageSize.width - padding - logoPadding;
+        const textYPosition = padding + logoPadding + logoHeight / 2;
+        doc.setFontSize(12); // Set font size for titles
+        doc.setFont('bold'); // Set font to bold
+        doc.text('BILL ACKNOWLEDGEMENT', textRightMargin, textYPosition, { align: 'right' });
+
+        // Reset font to normal
+        doc.setFont('normal');
+
+        // Add titles with specified width below the logo
+        const titleYPosition = padding + logoPadding + logoHeight + 2 * padding;
+        doc.setFontSize(12); // Set font size for titles
+        doc.text('Customer Name:', padding + logoPadding, titleYPosition);
+        doc.text('Payment Type:', padding + logoPadding, titleYPosition + 10);
+        doc.text('Paying Amount:', padding + logoPadding, titleYPosition + 20);
+        doc.text('Balance Amount:', padding + logoPadding, titleYPosition + 30);
+        doc.text('Receipt Date:', padding + logoPadding, titleYPosition + 40);
+
+        // Add customer data with specified width and left-aligned below the titles
+        const dataYPosition = padding + logoPadding + logoHeight + 2 * padding;
+        const dataXPosition = padding + logoPadding + titleWidth + 5;
+        doc.setFontSize(12); // Set font size for data values
+        doc.text(customerName, dataXPosition, dataYPosition);
+        doc.text(paymentType, dataXPosition, dataYPosition + 10);
+        doc.text(paidAmount.toString(), dataXPosition, dataYPosition + 20);
+        doc.text(remainingAmount.toString(), dataXPosition, dataYPosition + 30);
+        doc.text(billDate, dataXPosition, dataYPosition + 40);
+
+        // Add "NOTE: Amount Cannot Be Refund" below the customer data
+        const noteYPosition = padding + logoPadding + logoHeight + 1.5 * padding + 60;
+        doc.text('NOTE: Amount Cannot Be Refund', padding + logoPadding, noteYPosition);
+
+        // Add HR Signature
+        const signatureYPosition = noteYPosition + 2 * padding;
+        doc.text('HR Signature', padding + logoPadding, signatureYPosition);
+
+        // Save the PDF
+        doc.save(`${customerName}CustomerReceipt.pdf`);
+    };
+
+
     const confirmDelete = async (fieldToDelete) => {
         try {
-            console.log(`Deleting field with ID: ${fieldToDelete}`);
+            // console.log(`Deleting field with ID: ${fieldToDelete}`);
 
             const selectedCustomer = customersReceipt.find(customer => customer._id === fieldToDelete);
             const selectedCustomerToUpdate = invoiceList.find(customer => customer.clientName === (selectedCustomer.customerName));
-            console.log(invoiceList, selectedCustomerToUpdate, selectedCustomer);
+            // console.log(invoiceList, selectedCustomerToUpdate, selectedCustomer);
 
             const updatedRemainingAmount = parseFloat(selectedCustomer.remainingAmount) + parseFloat(selectedCustomer.paidAmount);
 
@@ -164,14 +279,13 @@ const CustomerTable = () => {
                                                 <TableCell style={{ fontSize: "13px" }}>{customer.billDate}</TableCell>
                                                 <TableCell>
                                                     <Tooltip title="Display Receipt">
-                                                        <Button onClick={() => handleDisplayModalOpen(customer)}>
-                                                            <VisibilityIcon />
-                                                        </Button>
+                                                        <VisibilityIcon className="display-view-btn" onClick={() => handleDisplayModalOpen(customer)} />
+                                                    </Tooltip>
+                                                    <Tooltip title="Download PDF">
+                                                        <PictureAsPdfIcon className="pdf-download-btn" onClick={() => handlePdfDownload(customer)} />
                                                     </Tooltip>
                                                     <Tooltip title="Delete">
-                                                        <Button onClick={() => handleDeleteClick(customer)}>
-                                                            <DeleteIcon />
-                                                        </Button>
+                                                        <DeleteIcon className="delete-view-btn" onClick={() => handleDeleteClick(customer)} />
                                                     </Tooltip>
                                                 </TableCell>
                                             </StyledTableRow>
@@ -183,9 +297,31 @@ const CustomerTable = () => {
                     </TableContainer>
                 </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                <Pagination count={Math.ceil(filteredCustomers.length / customersPerPage)} page={page} onChange={handlePageChange} style={{ marginBottom: "2rem" }} />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px', paddingBottom: "2rem" }}>
+                <PrevButton
+                    onClick={() => handleChangePage(null, page - 1)}
+                    disabled={page === 1}
+                >
+                    Prev
+                </PrevButton>
+                <ActivePagination
+                    count={Math.ceil(customersReceipt.length / customersPerPage)}
+                    page={page}
+                    onChange={handleChangePage}
+                    variant="outlined"
+                    shape="rounded"
+                    hideNextButton
+                    hidePrevButton
+                />
+
+                <NextButton
+                    onClick={() => handleChangePage(null, page + 1)}
+                    disabled={page === Math.ceil(customersReceipt.length / customersPerPage)}
+                >
+                    Next
+                </NextButton>
             </div>
+
             {/* Delete the details*/}
 
             {isWarningModalOpen && (
@@ -206,7 +342,14 @@ const CustomerTable = () => {
                 showModal && (
                     <DetailsModal isOpen={showModal} onClose={handleCancel} fieldToShow={fieldToDelete}>
                         <div className="view-modal-container">
-                            <h1>Customer Cash In</h1>
+                            <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+                                <div>
+                                    <h1>Customer Cash In</h1>
+                                </div>
+                                <div>
+                                    <h2 className='cancel-model-btn' onClick={handleCancel}>X</h2>
+                                </div>
+                            </div>
                             <div className="modal-flex" style={{ border: "1px solid rgba(159, 159, 159, 0.497)" }}>
                                 <div className="left-container">
                                     <p>Customer Name</p>

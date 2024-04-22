@@ -19,11 +19,27 @@ const leadSchema = new mongoose.Schema({
         type: String
     },
     FollowUpdates: {
-        type: String
+        type: [String]
     },
     Source: {
         type: String
-    }
+    },
+    Location: {
+        type: String
+    },
+    FollowupPerson: {
+        type: String
+    },
+    Course: {
+        type: String
+    },
+    DetailsSent: {
+        type: String
+    },
+    Rescheduled: {
+        type: String
+    },
+
 }, { strict: false, timestamps: true });
 
 module.exports = mongoose.model('ExcelLead', leadSchema);

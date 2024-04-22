@@ -35,11 +35,7 @@ export const showEmployees = createAsyncThunk(
             return response.data;
         }
         catch (error) {
-            if (error.response && error.response.status === 404) {
-                return [];
-            } else {
-                throw error.response.data;
-            }
+            throw error.response.data;
         }
     }
 )

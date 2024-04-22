@@ -2,12 +2,15 @@ const Staff = require('../modals/staffModal');
 
 const createStaff = async (req, res) => {
     try {
-        const { staffName, staffDoj, comments } = req.body;
+        const { staffName, staffDoj, comments, userName, password } = req.body;
         const newStaff = new Staff({
             staffName,
             staffDoj,
+            userName,
+            password,
             comments
         });
+        // console.log("stafff-backend---", newStaff);
         const savedStaff = await newStaff.save();
         res.status(201).json(savedStaff);
     } catch (error) {
@@ -25,7 +28,7 @@ const getAllStaff = async (req, res) => {
 };
 const updateStaff = async (req, res) => {
     const { id } = req.params;
-    const { staffName, staffDoj, comments } = req.body;
+    const { staffName, staffDoj, comments, userName, password } = req.body;
 
     try {
         const staff = await Staff.findById(id);
@@ -36,10 +39,11 @@ const updateStaff = async (req, res) => {
         staff.staffName = staffName;
         staff.staffDoj = staffDoj;
         staff.comments = comments;
+        staff.userName = userName;
+        staff.password = password;
 
         const updatedStaff = await staff.save();
-
-        res.status(200).json(updatedStaff);
+        res.status(200).json({ message: "Admin updated successfully", updateStaff });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

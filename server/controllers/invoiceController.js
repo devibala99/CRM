@@ -64,7 +64,7 @@ const getInvoice = async (req, res) => {
     try {
         const invoices = await Invoice.find();
         if (!invoices || invoices.length === 0) {
-            return res.status(404).json({ message: "No Invoices Found" });
+            return res.status(200).json({ message: "No Invoices Found", invoices: [] });
         }
         res.status(200).json(invoices);
     } catch (error) {

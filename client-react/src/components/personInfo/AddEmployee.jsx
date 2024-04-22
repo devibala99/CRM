@@ -7,7 +7,9 @@ import MuiAlert from '@mui/material/Alert';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { Link } from 'react-router-dom';
-import { useParams } from "react-router-dom"
+import { useParams } from "react-router-dom";
+import { createStaffDetail } from '../features/staffSlice';
+
 import "./addStudent.css"
 const AddEmployee = () => {
 
@@ -16,7 +18,7 @@ const AddEmployee = () => {
 
     // employee id from localstorage
     const initialEmployeeIdLocal = localStorage.getItem("currentEmployeeId") || "Emp-10001";
-    console.log(localStorage.getItem("currentEmployeeId"));
+    // console.log(localStorage.getItem("currentEmployeeId"));
     const initialEmployeeIdText = initialEmployeeIdLocal ? initialEmployeeIdLocal.split("-")[0] : initialEmployeeId.split("-")[0] || "EMP";
     const initialEmployeeNumber = parseInt(initialEmployeeIdLocal ? initialEmployeeIdLocal.split("-")[1] : initialEmployeeIdLocal.split("-")[1]);
     const [currentEmployeeIdText, setCurrentEmployeeIdText] = useState(initialEmployeeIdText);
@@ -134,6 +136,14 @@ const AddEmployee = () => {
                 setCurrentEmployeeIdNumber(nextEmployeeIdNumber);
                 localStorage.setItem('currentEmployeeId', fullEmployeeId);
 
+                if (employeeData.isStaff === "Yes") {
+                    const updateDetails = {
+                        staffName: employeeData.firstName + " " + employeeData.lastName,
+                        staffDoj: employeeData.staffDoj,
+                    }
+                    dispatch(createStaffDetail(updateDetails));
+                }
+
                 setEmployeeData({
                     employeeId: `${currentEmployeeIdText}-${currentEmployeeIdNumber}` || localStorage.getItem("currentEmployeeId") || "Set Employee Id In Master",
                     firstName: "",
@@ -207,7 +217,7 @@ const AddEmployee = () => {
         setIsUg(false);
         setIsPg(false);
         const splitQualification = selectedQualification.split(",");
-        console.log(splitQualification, selectedQualification);
+        // console.log(splitQualification, selectedQualification);
 
         splitQualification.forEach(qualification => {
             const trimmedQualification = qualification.trim();

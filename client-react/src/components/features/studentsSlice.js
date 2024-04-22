@@ -15,6 +15,7 @@ export const createStudent = createAsyncThunk(
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            // console.log(typeof (response.data) + "Redux");
             return response.data;
         }
         catch (error) {
@@ -75,6 +76,7 @@ export const convertStudentToEmployeeData = createAsyncThunk(
             const response = await axios.post(API_CONVERT_TO_EMPLOYEE, { employeeId, studentData });
             return response.data;
         } catch (error) {
+            alert("Please ensure that the Employee ID is correctly registered.");
             return rejectWithValue(error.response.data);
         }
     }
@@ -129,7 +131,7 @@ export const students = createSlice({
             // deleteStudent status
             .addCase(deleteStudent.pending, (state) => {
                 state.loading = true;
-                state.error = null; // Resetting error state on pending action
+                state.error = null;
             })
             .addCase(deleteStudent.fulfilled, (state, action) => {
                 state.loading = false;

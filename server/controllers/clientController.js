@@ -21,7 +21,7 @@ const getClient = async (req, res) => {
     try {
         const clients = await Clients.find();
         if (!clients || clients.length === 0) {
-            return res.status(404).json({ message: "No Clients Found" });
+            return res.status(200).json({ message: "No Clients Found", clients: [] });
         }
         const response = clients.map(client => ({
             id: client._id,

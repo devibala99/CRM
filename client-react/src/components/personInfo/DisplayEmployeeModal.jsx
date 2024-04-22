@@ -12,21 +12,21 @@ const DisplayEmployeeModal = ({ displayModalOpen, selectedEmployee, onClose }) =
     }
     console.log(selectedEmployee, "selected");
     return (
-        <Modal open={displayModalOpen} onClose={onClose}>
-            <div className='modal-container'>
-                <Typography variant="h5" className='heading' style={{ borderTopLeftRadius: "25px", borderTopRightRadius: "25px", backgroundColor: "#2196f3", color: "white", width: "100%", textAlign: "center", padding: "0.5rem 0" }}><strong>{selectedEmployee.firstName} {selectedEmployee.lastName} </strong></Typography>
+        <Modal open={displayModalOpen} onClose={onClose} style={{ border: "none", outline: 'none' }}>
+            <div className='modal-container' style={{ border: "none", outline: 'none' }}>
+                <Typography variant="h5" className='heading' style={{ borderTopLeftRadius: "4px", borderTopRightRadius: "4px", backgroundColor: "#2196f3", color: "white", width: "100%", textAlign: "center", padding: "0.5rem 0" }}><strong>{selectedEmployee.firstName} {selectedEmployee.lastName} </strong></Typography>
                 <div className='row-container'>
                     <div className="image-segment-center" >
                         <div className="student-image">
                             <div className='field-row'>
-                                {/*<Typography variant="body1" style={{ color: "#2196f3", width: "100%", textAlign: "left" }}><strong>Employee Image</strong></Typography>*/}
+
                                 <a href={selectedEmployee.employeeImage} target="_blank" rel="noopener noreferrer">
                                     <img src={selectedEmployee.employeeImage} alt="Employee" />
                                 </a>
                             </div>
                             <div className='personal-details'>
                                 <div className='field-row'>
-                                    {/*<Typography variant="body1" style={{ color: "#2196f3", width: "100%", textAlign: "left" }}><strong>Personal Details</strong></Typography>*/}
+
                                 </div>
                                 <div className='field-row'>
                                     <Typography variant="body1"><strong>Employee Id</strong></Typography>
@@ -49,7 +49,7 @@ const DisplayEmployeeModal = ({ displayModalOpen, selectedEmployee, onClose }) =
                                     <Typography variant="body1"> {selectedEmployee.motherName}</Typography>
                                 </div>
                                 <div className='field-row'>
-                                    {/*  <Typography variant="body1" style={{ color: "#2196f3", width: "100%", textAlign: "left" }}><strong>Contact Details</strong></Typography>*/}
+
                                 </div>
                                 <div className='field-row'>
                                     <Typography variant="body1"><strong>Date of Birth</strong></Typography>
@@ -83,9 +83,7 @@ const DisplayEmployeeModal = ({ displayModalOpen, selectedEmployee, onClose }) =
                                 )}
                             </div>
                         </div>
-                        {/*} <div className="contact-details" style={{ borderRight: "none" }}>
-                           
-    </div> */}
+
                     </div>
 
                     <div className="content-container">
@@ -93,8 +91,7 @@ const DisplayEmployeeModal = ({ displayModalOpen, selectedEmployee, onClose }) =
                         <div className='display-student-modal'>
                             <div className='education-work'>
                                 <div className='field-row'>
-                                    {/*<Typography variant="body1" style={{ color: "#2196f3", width: "100%", textAlign: "left" }}><strong>Education & Work</strong></Typography>
-                            */}
+
                                 </div>
                                 <div className='field-row'>
                                     <Typography variant="body1"><strong>SSLC Percentage</strong></Typography>
@@ -277,6 +274,7 @@ const DisplayEmployeeModal = ({ displayModalOpen, selectedEmployee, onClose }) =
 
                     </div>
                 </div>
+                <Typography variant="h5" className='heading' style={{ borderBottomLeftRadius: "4px", borderBottomRightRadius: "4px", backgroundColor: "#2196f3", color: "white", width: "100%", textAlign: "center", padding: "0.5rem 0", cursor: "pointer" }} onClick={onClose}><strong>Cancel </strong></Typography>
 
             </div>
         </Modal>

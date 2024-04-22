@@ -8,11 +8,9 @@ import { createInvoice } from "../features/invoiceSlice"
 import { useDispatch, useSelector } from 'react-redux';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { formControlClasses } from '@mui/material';
 const Gst = () => {
 
     const dispatch = useDispatch();
-    // fetch client name from store
     useEffect(() => {
         dispatch(showClients());
     }, [dispatch]);
@@ -27,7 +25,7 @@ const Gst = () => {
     }, []);
 
     const kikatGstNo = "33BIQPA2943B1ZQ";
-    const clientList = useSelector(state => state.clients.clientEntries);
+    const clientList = useSelector(state => state.clients.clientEntries) || [];
     const [clientNameCurrent, setClientNameCurrent] = useState("");
     const [selectedClient, setSelectedClient] = useState({
         clientName: '',
@@ -53,7 +51,7 @@ const Gst = () => {
     const currentDate = new Date();
     const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const formattedDate = currentDate.toLocaleDateString('en-GB', options);
-    // handle input changes to create new row in table
+
     const handleInputChanges = (e, index, entry) => {
         const { value } = e.target;
         const addRow = [...newRow];
@@ -175,7 +173,7 @@ const Gst = () => {
         setIsPrintClicked(true);
         saveInvoice();
         // dispatch(createInvoice(selectedClient));
-        console.log("SELECTED CLIENT", selectedClient)
+        // console.log("SELECTED CLIENT", selectedClient)
         window.print();
 
     }
@@ -200,7 +198,7 @@ const Gst = () => {
                         <div className="select-name" data-selected-option={clientNameCurrent} style={{ margin: "0", padding: "0" }}>
                             <select style={{ fontWeight: "bold" }} value={clientNameCurrent} onChange={handleClientSelect} name='emp_name'>
                                 <option value="" style={{ width: "200px" }}>Select a Client</option>
-                                {clientList.map(client => (
+                                {Array.isArray(clientList) && clientList.map(client => (
                                     <option key={client.id} value={client.clientName} style={{ width: "200px", margin: "0", padding: "0" }}>
                                         {client.clientName}
                                     </option>

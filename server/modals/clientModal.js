@@ -19,6 +19,7 @@ const clientSchema = mongoose.Schema({
     },
     phoneNumber: {
         type: String,
+        unique: true,
     },
     gst_in: {
         type: String,

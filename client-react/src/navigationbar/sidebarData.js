@@ -8,7 +8,11 @@ import ListIcon from '@mui/icons-material/List';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import LocalLibraryOutlinedIcon from '@mui/icons-material/LocalLibraryOutlined';
+import EventIcon from '@mui/icons-material/Event';
+
+
 export const items = [
 
     {
@@ -83,50 +87,50 @@ export const items = [
             }
         ]
     },
-    // {
-    //     id: 10,
-    //     title: 'Vendors',
-    //     path: "/home",
-    //     icon: <PersonIcon />,
-    //     dropdowns: [
-    //         {
-    //             id: 101,
-    //             path: "/home/createVendor",
-    //             title: "Add Vendor",
-    //             icon: <AddBoxOutlinedIcon />
-    //         },
-    //         {
-    //             id: 102,
-    //             path: "/home/vendors",
-    //             title: "Manage Vendors",
-    //             icon: <ListIcon />
-    //         },
-    //     ]
-    // },
+    {
+        id: 10,
+        title: 'Vendors',
+        path: "/home",
+        icon: <PersonIcon />,
+        dropdowns: [
+            {
+                id: 101,
+                path: "/home/createVendor",
+                title: "Add Vendor",
+                icon: <AddBoxOutlinedIcon />
+            },
+            {
+                id: 102,
+                path: "/home/vendors",
+                title: "Manage Vendors",
+                icon: <ListIcon />
+            },
+        ]
+    },
     {
         id: 11,
         title: 'Leads',
         path: "/home",
         icon: <PersonIcon />,
         dropdowns: [
-            // {
-            //     id: 111,
-            //     path: "/home/create_Lead",
-            //     title: "Add Lead",
-            //     icon: <AddBoxOutlinedIcon />
-            // },
-            // {
-            //     id: 112,
-            //     path: "/home/display_lead",
-            //     title: "Leads list",
-            //     icon: <ListIcon />
-            // },
+            {
+                id: 111,
+                path: "/home/create_Lead",
+                title: "Add Lead",
+                icon: <AddBoxOutlinedIcon />
+            },
             {
                 id: 113,
                 path: "/home/excel-leads",
                 title: "Manage Leads",
                 icon: <ListIcon />
-            }
+            },
+            {
+                id: 112,
+                path: "/home/rescheduled-leads",
+                title: "Rescheduled list",
+                icon: <ListIcon />
+            },
         ]
     },
     {
@@ -141,13 +145,47 @@ export const items = [
                 icon: <ListIcon />,
                 title: "Cash-In",
             },
-            // {
-            //     id: 42,
-            //     path: "/home/cashout",
-            //     icon: <ListIcon />,
-            //     title: "Cash-Out",
-            // },
+            {
+                id: 42,
+                path: "/home/cashout",
+                icon: <ListIcon />,
+                title: "Cash-Out",
+            },
 
+        ],
+    },
+    {
+        id: 16,
+        title: "Interview",
+        icon: <EventIcon />,
+        path: "/home",
+        dropdowns: [
+            {
+                id: 161,
+                path: "/home/add-interview",
+                icon: <AddBoxOutlinedIcon />,
+                title: "Schedule",
+            },
+            {
+                id: 162,
+                path: "/home/view-interview",
+                icon: <ListIcon />,
+                title: "Manage Interview",
+            },
+        ],
+    },
+    {
+        id: 17,
+        title: "Reports",
+        icon: <BarChartIcon />,
+        path: "/home",
+        dropdowns: [
+            {
+                id: 171,
+                path: "/home/manage-reports",
+                icon: <ListIcon />,
+                title: "Manage Reports",
+            },
         ],
     },
     {
@@ -207,6 +245,12 @@ export const items = [
                 icon: <LocalLibraryOutlinedIcon />,
                 path: "/home/course_fees",
                 title: "Course Fees",
+            },
+            {
+                id: 76,
+                icon: <LocalLibraryOutlinedIcon />,
+                path: "/home/admins",
+                title: "Admins",
             },
 
         ],

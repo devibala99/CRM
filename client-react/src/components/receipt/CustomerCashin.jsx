@@ -55,7 +55,8 @@ const CustomerCashin = () => {
         const selectedValue = selectedOption ? selectedOption.value : "";
         setSelectedNameValue(selectedValue);
 
-        const selectedEntry = clientInvoice.find(entry => entry.clientName === selectedValue);
+        const selectedEntry = Array.isArray(clientInvoice) && clientInvoice.length > 0 ?
+            clientInvoice.find(entry => entry.clientName === selectedValue) : null;
         if (selectedEntry) {
             setSelectedInvoice(selectedEntry);
             setCustomerReceipt({
@@ -79,7 +80,7 @@ const CustomerCashin = () => {
         const paidAmount = parseFloat(value);
 
         if (paidAmount > customerReceipt.currentBalance) {
-            console.log("greateer")
+            // console.log("greateer")
             setCustomerReceipt(prevState => ({
                 ...prevState,
                 paidAmount: 0.00
@@ -104,54 +105,49 @@ const CustomerCashin = () => {
 
         setCustomerReceipt(updatedDetails);
     };
-
+    function formattedDate(dateValue) {
+        if (!dateValue) return '';
+        const dateObj = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+        if (isNaN(dateObj.getTime())) return '';
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${day}-${month}-${year}`;
+    }
     const handleCustomerCashinSubmit = async (e) => {
         e.preventDefault();
         const today = new Date();
-        const formattedDate = today.toLocaleDateString("en-GB");
-
+        const formattedDateValue = formattedDate(today);
         const updatedReceipt = {
             ...customerReceipt,
-            billDate: formattedDate,
+            billDate: formattedDateValue
         }
-        console.log(selectedInvoice);
         try {
             const resultAction = await dispatch(createReceipt(updatedReceipt));
             const response = await resultAction.payload;
-            const updatedRemainingAmount = customerReceipt.currentBalance - customerReceipt.paidAmount;
 
-            const updatedData = {
-                remainingAmount: updatedRemainingAmount
-            };
             if (response && response._id) {
-                const updateAction = await dispatch(updateInvoice({ id: selectedInvoice._id, updatedData }));
-                const updatedCustomerResponse = updateAction.payload;
-                if (updatedCustomerResponse) {
-                    setCustomerReceipt({
-                        customerName: "",
-                        currentBalance: "",
-                        paidAmount: "",
-                        remainingAmount: "",
-                        billDate: "",
-                        paymentType: "",
-                        bankName: "",
-                        bankPaymentType: "",
-                        onlinePaymentGateway: "",
-                        chequeNumber: "",
-                        comments: "",
-                    })
-                }
+                setCustomerReceipt({
+                    customerName: "",
+                    currentBalance: "",
+                    paidAmount: "",
+                    remainingAmount: "",
+                    billDate: "",
+                    paymentType: "",
+                    bankName: "",
+                    bankPaymentType: "",
+                    onlinePaymentGateway: "",
+                    chequeNumber: "",
+                    comments: "",
+                })
                 setSuccessMessage(true);
                 setSnackbarOpen(true);
-
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
             setErrorMessage("Error occurred while processing the receipt.");
             setErrorSnackbarOpen(true);
         }
-
     };
 
     return (
@@ -164,12 +160,12 @@ const CustomerCashin = () => {
                         <Select
                             id="customerName"
                             name="customerName"
-                            value={clientInvoice.find(option => option.label === selectedNameValue)}
+                            value={clientInvoice.length > 0 ? clientInvoice.find(option => option.label === selectedNameValue) : ''}
                             onChange={handleSelectedCustomer}
-                            options={clientInvoice.filter(customer => customer.remainingAmount > 0).map(entry => ({
+                            options={clientInvoice.length > 0 ? clientInvoice.filter(customer => customer.remainingAmount > 0).map(entry => ({
                                 value: entry.clientName,
                                 label: entry.clientName
-                            }))}
+                            })) : []}
                             isSearchable={true}
                             styles={{
                                 container: (provided) => ({

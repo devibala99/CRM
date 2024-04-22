@@ -10,6 +10,8 @@ const JWT_CREDINIALS = "hRmDashboard2023Login";
 
 const API_USER_GOALS = "http://localhost:8011/goals";
 
+const API_UPDATE_USER = "http://localhost:8011/hrm/updateUser";
+
 
 // students api 
 const API_ADD_STUDENT = "http://localhost:8011/info/addStudent";
@@ -129,12 +131,24 @@ const API_UPDATE_LEAD_DATA_DETAIL = "http://localhost:8011/leadData/updateLead";
 
 const API_DELETE_LEAD_DATA_DETAIL = "http://localhost:8011/leadData/deleteLead";
 
+// Interview
+const API_FETCH_INTERVIEW_DETAILS = "http://localhost:8011/interviews/fetch-interviews";
+
+const API_CREATE_INTERVIEW_DETAIL = "http://localhost:8011/interviews/create-interview";
+
+const API_UPDATE_INTERVIEW_DETAIL = "http://localhost:8011/interviews/update-interview";
+
+const API_DELETE_INTERVIEW_DETAIL = "http://localhost:8011/interviews/delete-interview";
+
+// Reports
+
 export {
     API_REGISTER_URL,
     API_LOGIN_URL,
     API_GET_REGISTERED_USERS,
     API_CHECK_REGISTERD_USERS,
     JWT_CREDINIALS,
+    API_UPDATE_USER,
     API_USER_GOALS,
     API_ADD_STUDENT,
     API_GET_STUDENT,
@@ -188,4 +202,8 @@ export {
     API_FETCH_LEAD_DATA_DETAILS,
     API_UPDATE_LEAD_DATA_DETAIL,
     API_DELETE_LEAD_DATA_DETAIL,
+    API_CREATE_INTERVIEW_DETAIL,
+    API_FETCH_INTERVIEW_DETAILS,
+    API_UPDATE_INTERVIEW_DETAIL,
+    API_DELETE_INTERVIEW_DETAIL
 }

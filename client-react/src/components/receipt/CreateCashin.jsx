@@ -18,7 +18,7 @@ const CreateCashin = () => {
     const dispatch = useDispatch();
     const students = useSelector(state => state.students.entries);
     const [selectedStudent, setSelectedStudent] = useState([]);
-
+    const [studentCourse, setStudentCourse] = useState("");
     const studentReceiptData = useSelector(state => state.studentReceipts.studentReceiptEntries);
     // snackbar
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -30,11 +30,13 @@ const CreateCashin = () => {
     }, [dispatch]);
     useEffect(() => {
         localStorage.setItem("studentsKitkat", JSON.stringify(students));
+        if (students.length > 0) {
+            setStudentCourse(students[0].course);
+        }
     }, [students]);
     useEffect(() => {
         localStorage.setItem('cashInPerson', cashInPerson);
     }, [cashInPerson]);
-
 
     const handleCashInPersonChange = (e) => {
         const newValue = e.target.value;
@@ -86,7 +88,8 @@ const CreateCashin = () => {
         const selectedValue = selectedOption ? selectedOption.value : "";
         setSelectedNameValue(selectedValue);
 
-        const selectedEntry = students.find(entry => `${entry.firstName} ${entry.lastName}` === selectedValue);
+        const selectedEntry = Array.isArray(students) && students.length > 0 ?
+            students.find(entry => `${entry.firstName} ${entry.lastName}` === selectedValue) : null;
         if (selectedEntry) {
             setSelectedStudent(selectedEntry);
             setStudentReceipt({
@@ -115,16 +118,27 @@ const CreateCashin = () => {
         }
         setErrorSnackbarOpen(false);
     }
+    function formattedDate(dateValue) {
+        if (!dateValue) return '';
+        const dateObj = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
+        if (isNaN(dateObj.getTime())) return '';
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${day}-${month}-${year}`;
+    }
     const handleStudentReceiptSubmit = async (e) => {
         e.preventDefault();
         try {
             const today = new Date();
-            const formattedDate = today.toLocaleDateString('en-GB');
+            const formattedDateValue = formattedDate(today);
             const updatedReceipt = {
                 ...studentReceipt,
-                billDate: formattedDate
+                billDate: formattedDateValue,
+                course: studentCourse,
+                duration: "6 Months",
             };
-
+            console.log(updatedReceipt);
             const createReceiptAction = await dispatch(createReceipt(updatedReceipt));
             const createReceiptResponse = createReceiptAction.payload;
 
@@ -164,6 +178,44 @@ const CreateCashin = () => {
         }
     };
 
+    // const handleStudentReceiptSubmit = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         const today = new Date();
+    //         const formattedDateValue = formattedDate(today);
+    //         const updatedReceipt = {
+    //             ...studentReceipt,
+    //             billDate: formattedDateValue,
+    //             course: studentCourse,
+    //             duration: "6 Months",
+    //         };
+    //         console.log(updatedReceipt);
+    //         const createReceiptAction = await dispatch(createReceipt(updatedReceipt));
+    //         const createReceiptResponse = createReceiptAction.payload;
+
+    //         if (createReceiptAction.type === 'studentReceipts/createReceipt/fulfilled') {
+    //             setStudentReceipt({
+    //                 studentName: "",
+    //                 currentBalance: "",
+    //                 paidAmount: "",
+    //                 remainingAmount: "",
+    //                 billDate: "",
+    //                 paymentType: "",
+    //                 bankName: "",
+    //                 bankPaymentType: "",
+    //                 onlinePaymentGateway: "",
+    //                 chequeNumber: "",
+    //                 comments: "",
+    //             });
+    //             setSuccessMessage(true);
+    //             setSnackbarOpen(true);
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         setErrorMessage("Error occurred while processing the receipt.");
+    //         setErrorSnackbarOpen(true);
+    //     }
+    // };
 
     return (
 
@@ -252,12 +304,12 @@ const CreateCashin = () => {
                                 <Select
                                     id="studentName"
                                     name="studentName"
-                                    value={students.find(option => option.label === selectedStudent)}
+                                    value={students.length > 0 ? students.find(option => option.label === selectedStudent) : ''}
                                     onChange={handleSelectedStudent}
-                                    options={students.filter(student => student.remainingAmount > 0).map(entry => ({
+                                    options={students.length > 0 ? students.filter(student => student.remainingAmount > 0).map(entry => ({
                                         value: `${entry.firstName} ${entry.lastName}`,
                                         label: `${entry.firstName} ${entry.lastName}`
-                                    }))}
+                                    })) : []}
                                     isSearchable={true}
                                     styles={{
                                         container: (provided) => ({
@@ -270,6 +322,7 @@ const CreateCashin = () => {
                                     }}
                                 />
                             </div>
+
                             <div className="form-group">
                                 <label htmlFor="currentBalance">Current Balance:</label>
                                 <input
