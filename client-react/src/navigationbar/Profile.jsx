@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserDetails } from "../../../client-react/src/components/features/registerDetailSlice";
-import { selectUser } from "../../../client-react/src/components/features/loginUserSlice";
+import { selectUser, setUser } from "../../../client-react/src/components/features/loginUserSlice";
 import Button from '@mui/material/Button';
 import { Modal, Paper } from '@mui/material';
 import { getStaffDetails, updateStaffDetail } from "../../../client-react/src/components/features/staffSlice";
@@ -19,26 +19,58 @@ const Profile = () => {
     const [usersStaff, setUsersStaff] = useState(null);
     const [usersAdmin, setUsersAdmin] = useState(null);
 
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await dispatch(getStaffDetails());
+    //             console.log("Response from getStaffDetails:", response);
+
+    //             if (Array.isArray(response.payload) && response.payload.length > 0) {
+    //                 const filteredData = response.payload.filter(data => data.userName === user.userName);
+    //                 setUsersStaff(filteredData);
+
+    //                 if (filteredData.length > 0) {
+    //                     // Fetch user details and filter based on usersStaff
+    //                     const userResponse = await axios.get('http://localhost:8011/hrm/user');
+    //                     const filteredUserAdmin = userResponse.data.filter(userData => {
+    //                         return filteredData.some(staff => staff.userName === userData.userName);
+    //                     });
+    //                     setUsersAdmin(filteredUserAdmin);
+    //                 }
+    //             } else {
+    //                 console.error("Invalid response format:", response);
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching staff details:", error);
+    //         }
+    //     };
+
+    //     fetchData();
+
+    // }, [dispatch, user]);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await dispatch(getStaffDetails());
-                console.log("Response from getStaffDetails:", response);
+                // Fetch user details first
+                const userResponse = await axios.get('http://localhost:8011/hrm/user');
+                const userAdminUserNames = userResponse.data.map(userData => userData.userName);
 
-                if (Array.isArray(response.payload) && response.payload.length > 0) {
-                    const filteredData = response.payload.filter(data => data.userName === user.userName);
+                // Then fetch staff details
+                const staffResponse = await dispatch(getStaffDetails());
+                console.log("Response from getStaffDetails:", staffResponse);
+
+                if (Array.isArray(staffResponse.payload) && staffResponse.payload.length > 0) {
+                    const filteredData = staffResponse.payload.filter(data => userAdminUserNames.includes(data.userName));
                     setUsersStaff(filteredData);
 
                     if (filteredData.length > 0) {
-                        // Fetch user details and filter based on usersStaff
-                        const userResponse = await axios.get('http://localhost:8011/hrm/user');
-                        const filteredUserAdmin = userResponse.data.filter(userData => {
-                            return filteredData.some(staff => staff.userName === userData.userName);
-                        });
-                        setUsersAdmin(filteredUserAdmin);
+                        setUsersAdmin(userResponse.data.filter(userData => filteredData.some(staff => staff.userName === userData.userName)));
+                    } else {
+                        setUsersAdmin([]);
                     }
                 } else {
-                    console.error("Invalid response format:", response);
+                    console.error("Invalid response format:", staffResponse);
                 }
             } catch (error) {
                 console.error("Error fetching staff details:", error);
@@ -46,41 +78,41 @@ const Profile = () => {
         };
 
         fetchData();
-
-    }, [dispatch, user]);
+    }, [dispatch]);
 
 
     console.log(usersStaff, "userstaff");
     const handleClose = () => {
         setOpen(false);
     };
+
     const handleSave = async () => {
-        console.log("Users Staff:", usersStaff);
-        console.log(usersAdmin, "userRegister");
-        console.log("User ID:", user ? user._id : null);
-
-        // Check if usersStaff is empty
-        if (!usersStaff || usersStaff.length === 0) {
-            console.error("Users Staff is empty.");
-            return;
-        }
-
         try {
             const updatedData = {
                 userName: name,
                 password: password,
-                staffName: usersStaff[0].staffName,
-                staffDoj: usersStaff[0].staffDoj
+                staffName: usersStaff[0]?.staffName || null,
+                staffDoj: usersStaff[0]?.staffDoj || null
             };
             const updatedAdmin = {
                 userName: name,
                 password: password
             };
+
             console.log(updatedAdmin, "Admin");
-            await Promise.all([
-                user && dispatch(updateUserDetails({ userId: user._id, updatedData: updatedAdmin })),
-                dispatch(updateStaffDetail({ id: usersStaff[0]._id, updatedData })),
-            ]);
+
+            const updatePromises = [];
+
+            if (user) {
+                if (!usersStaff.some(staff => staff.userName === user.userName)) {
+                    updatePromises.push(dispatch(updateUserDetails({ userId: user._id, updatedData: updatedAdmin })));
+                } else {
+                    updatePromises.push(dispatch(updateStaffDetail({ id: usersStaff[0]._id, updatedData })));
+                    updatePromises.push(dispatch(updateUserDetails({ userId: user._id, updatedData: updatedAdmin })));
+                }
+            }
+
+            await Promise.all(updatePromises);
 
             localStorage.setItem("user", JSON.stringify({ ...user, userName: name, password: password }));
             handleClose();
@@ -88,8 +120,6 @@ const Profile = () => {
             console.error("Error updating staff:", error);
         }
     };
-
-
 
     return (
         <Modal

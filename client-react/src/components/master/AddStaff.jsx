@@ -46,9 +46,7 @@ const AddStaff = () => {
                 dispatch(createUser({ userName: createStaff.userName, password: createStaff.password }));
             }
         }
-
         dispatch(createStaffDetail(updatedStaff));
-
         setCreateStaff({
             staffName: "",
             staffDoj: "",
@@ -67,10 +65,16 @@ const AddStaff = () => {
         }));
         return newOption;
     };
-    const employeeOptions = Array.isArray(employeeList) ? employeeList.map(employee => ({
-        value: employee.id,
-        label: `${employee.firstName} ${employee.lastName}`
-    })) : [];
+    const employeeOptions = Array.isArray(employeeList) ? employeeList
+        .filter(employee => employee.isStaff === "Yes")
+        .map(employee => {
+            const fullName = `${employee.firstName} ${employee.lastName}`;
+            return {
+                value: employee.id,
+                label: fullName
+            };
+        }) : [];
+
 
     return (
         <div className='student-view-container'>
@@ -107,7 +111,7 @@ const AddStaff = () => {
                                 option: (provided) => ({ ...provided, textAlign: "left" })
                             }}
                             onCreateOption={handleCreateOption}
-                            isRequired
+                        // isRequired
                         />
                     </div>
 
@@ -119,7 +123,7 @@ const AddStaff = () => {
                             id="staffDoj"
                             name="staffDoj"
                             value={createStaff.staffDoj}
-                            required
+                            // required
                             onChange={e => setCreateStaff({ ...createStaff, staffDoj: e.target.value })}
                         />
                     </div>
@@ -149,7 +153,7 @@ const AddStaff = () => {
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="address">Comments:</label>
+                        <label htmlFor="comments">Comments:</label>
                         <textarea
                             type="text"
                             id="comments"

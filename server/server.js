@@ -14,13 +14,13 @@ const invoiceRoutes = require("./routes/invoiceRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const studentReceiptRoutes = require("./routes/studentReceiptRoutes");
 const customerReceiptRoutes = require("./routes/customerReceiptRoute");
-// const cashoutRoutes = require("./routes/cashoutRoutes");
-// const vendorRoutes = require("./routes/vendorRoutes");
+const cashoutRoutes = require("./routes/cashoutRoutes");
+const vendorRoutes = require("./routes/vendorRoutes");
 const staffRoutes = require("./routes/staffRoutes");
-// const leadRoutes = require("./routes/leadRoutes");
-// const leadExcelRoutes = require("./routes/leadExcelRoutes");
+const leadRoutes = require("./routes/leadRoutes");
+const leadExcelRoutes = require("./routes/leadExcelRoutes");
 const excelController = require("./controllers/excelController");
-
+const interviewRoutes = require("./routes/interviewRoutes");
 // env
 require("dotenv").config();
 
@@ -55,12 +55,15 @@ app.use("/invoiceDetail", invoiceRoutes);
 app.use("/course", courseRoutes);
 app.use("/studentReceipt", studentReceiptRoutes);
 app.use("/customerReceipt", customerReceiptRoutes);
-// app.use("/cashout", cashoutRoutes);
-// app.use("/vendors", vendorRoutes);
+app.use("/cashout", cashoutRoutes);
+app.use("/vendors", vendorRoutes);
 app.use("/staff", staffRoutes);
-// app.use("/lead", leadRoutes);
-// app.use("/leadData", leadExcelRoutes);
+app.use("/lead", leadRoutes);
+app.use("/leadData", leadExcelRoutes);
 app.use("/excelData", excelController);
+app.use("/interviews", interviewRoutes);
+
+
 mongoose.connect(url).then(() => {
     console.log("Connected Successfully");
 })

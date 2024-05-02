@@ -38,6 +38,7 @@ const studentSchema = mongoose.Schema({
     contactNumber1: {
         type: String,
         required: true,
+        unique: true
     },
     contactNumber2: {
         type: String,

@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import SidebarItems from './SidebarItems';
 // redux
 import { useSelector, useDispatch } from 'react-redux';
+import { setUser } from '../../../client-react/src/components/features/loginUserSlice';
 import { selectUser } from "../../../client-react/src/components/features/loginUserSlice";
-import { updateUserDetails } from "../../../client-react/src/components/features/registerDetailSlice";
 import './sidebar.css';
 import { updateStaffDetail, getStaffDetails } from '../components/features/staffSlice';
 import axios from 'axios';
@@ -201,7 +201,6 @@ const Sidebar = ({ width, collapsed, items }) => {
     };
     const handleSaveUsername = async () => {
         try {
-
             const updateStaff = {
                 staffName: selectedStaff.staffName,
                 staffDoj: selectedStaff.staffDoj,
@@ -212,17 +211,33 @@ const Sidebar = ({ width, collapsed, items }) => {
                 userName: newUsername,
                 password: selectedStaff.password
             }
-
-            // console.log("Admin---", usersAdmin, selectedStaff);
-
-            if (selectedStaff && selectedStaff._id && usersAdmin.length > 0) {
-                await Promise.all([
-                    dispatch(updateStaffDetail({ id: selectedStaff._id, updatedData: updateStaff })),
-                    axios.put(`http://localhost:8011/hrm/updateUser/${usersAdmin[0]._id}`, updatedAdmin) // Use usersAdmin[0]._id to access the _id of the first admin object
-                ]);
+            console.log(selectedStaff, usersAdmin);
+            // Check if selectedStaff._id is undefined, null, or empty
+            if (!selectedStaff || !selectedStaff._id) {
+                if (usersAdmin.length > 0) {
+                    await axios.put(`http://localhost:8011/hrm/updateUser/${usersAdmin[0]._id}`, updatedAdmin);
+                } else {
+                    console.error('Error: usersAdmin is empty.');
+                }
             } else {
-                console.error('Error: Selected staff ID not found or usersAdmin is empty.');
+                if (usersAdmin.length > 0) {
+                    const isAdmin = usersAdmin.some(admin => admin.userName === selectedStaff.userName);
+
+                    if (isAdmin) {
+                        await Promise.all([
+                            dispatch(updateStaffDetail({ id: selectedStaff._id, updatedData: updateStaff })),
+                            axios.put(`http://localhost:8011/hrm/updateUser/${usersAdmin[0]._id}`, updatedAdmin)
+                        ]);
+                    } else {
+                        console.error('Error: selectedStaffDetails.userName is not present in usersAdmin.userName.');
+                    }
+                } else {
+                    console.error('Error: usersAdmin is empty.');
+                }
             }
+
+            setUser({ ...user, userName: newUsername });
+            setNewUsername(newUsername);
             localStorage.setItem("user", JSON.stringify({ ...user, userName: newUsername }));
             window.location.reload();
 
@@ -230,6 +245,7 @@ const Sidebar = ({ width, collapsed, items }) => {
             console.error('Error updating user:', error);
         }
     };
+
     return (
         <CustomScrollbar className="sidebar" style={sidebarStyle}>
             {sidebarStyle.width === '60px' ?

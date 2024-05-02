@@ -16,9 +16,13 @@ import { showStudents } from '../features/studentsSlice';
 const AddStudent = () => {
     const { studentId: initialStudentId } = useParams();
     const dispatch = useDispatch();
+    const students = useSelector(state => state.students.entries);
     const courseEntries = useSelector(state => (state.courses?.courseEntries) ?? []);
     const staffDetails = useSelector(state => state.staffDetails.staffDetailEntries);
     const studentDetailsFetch = useSelector(state => (state.students.entries) ?? []);
+    useEffect(() => {
+        dispatch(showStudents());
+    }, [dispatch]);
     useEffect(() => {
         const storedCourseEntries = localStorage.getItem('courseFields');
         dispatch(getStaffDetails());
@@ -26,11 +30,25 @@ const AddStudent = () => {
             dispatch(fetchCourse());
         }
     }, [dispatch]);
-    // to avoid undefined issue in the studentId  and get the value from localstorage
-    const initialStudentIdLocal = localStorage.getItem('currentStudentId') || initialStudentId || `KIT-001`;
+    const [initialStudentIdLocal, setInitialStudentIdLocal] = useState(() => {
+        const localStorageValue = localStorage.getItem("currentStudentId");
+        return localStorageValue;
+    });
+    useEffect(() => {
+        if (students.length > 0) {
+            const lastStudent = students[students.length - 1];
+            const lastStudentId = lastStudent.studentId;
+            setInitialStudentIdLocal(lastStudentId);
+        } else {
+            // If employees array is empty, fall back to the value from localStorage
+            const localStorageValue = localStorage.getItem("currentStudent");
+            setInitialStudentIdLocal(localStorageValue);
+        }
+    }, [students]);
+    console.log(initialStudentIdLocal, students);
+
     const initialStudentIdText = initialStudentIdLocal ? initialStudentIdLocal.split("-")[0] : initialStudentId.split("-")[0] || "KIT";
     const initalStudentIdNumber = parseInt(initialStudentIdLocal ? initialStudentIdLocal.split('-')[1] : initialStudentId.split('-')[1]) || 1001;
-
     const [currentStudentIdText, setCurrentStudentIdText] = useState(initialStudentIdText);
     const [currentStudentIdNumber, setCurrentStudentIdNumber] = useState(initalStudentIdNumber)
 
@@ -87,6 +105,24 @@ const AddStudent = () => {
         studentImage: null,
         comments: ''
     });
+    useEffect(() => {
+        if (initialStudentIdLocal) {
+            const lastNumber = parseInt(initialStudentIdLocal.split("-")[1]);
+            const newNumber = lastNumber + 1;
+            const newStudentId = `EMP-${newNumber}`;
+            localStorage.setItem("currentEmployeeId", newStudentId);
+            setStudentDetails(prevData => ({
+                ...prevData,
+                studentId: newStudentId
+            }));
+        } else {
+            const localStorageValue = localStorage.getItem("currentStudentId");
+            setStudentDetails(prevData => ({
+                ...prevData,
+                studentId: localStorageValue || "Set Student Id In Master"
+            }));
+        }
+    }, [initialStudentIdLocal]);
     const handleCourseFees = (e) => {
         const selectedCourse = e.target.value;
         const selectedEntry = courseEntries.find(entry => entry.course === selectedCourse);
@@ -135,21 +171,23 @@ const AddStudent = () => {
         }
         setErrorSnackbarOpen(false);
     }
-    const handleStudentSubmit = async () => {
+    const handleStudentSubmit = async (event) => {
+        event.preventDefault();
+
         try {
-            // Check if contactNumber1 already exists
-            const contactNumberExists = studentDetailsFetch.some(student => student.contactNumber1 === studentDetails.contactNumber1);
-            console.log(studentDetailsFetch, "getch");
-            if (contactNumberExists) {
-                alert("Contact number already exists in the database.");
-                return;
+            if (studentDetailsFetch.length > 0) {
+                const contactNumberExists = studentDetailsFetch.some(student => student.contactNumber1 === studentDetails.contactNumber1);
+                if (contactNumberExists) {
+                    alert("Contact number already exists in the database. Please choose a different one.");
+                    return false;
+                }
             }
 
             const formData = new FormData();
-
             for (const key in studentDetails) {
                 formData.append(key, studentDetails[key]);
             }
+
             const resultAction = await dispatch(createStudent(formData));
             const response = await resultAction.payload;
 
@@ -159,15 +197,16 @@ const AddStudent = () => {
                 setSuccessMessage(true);
                 setErrorMessage("");
 
-                // Update student id
                 const nextStudentIdNumber = currentStudentIdNumber + 1;
                 const fullStudentId = `${currentStudentIdText}-${nextStudentIdNumber}`;
                 setCurrentStudentIdText(fullStudentId.split("-")[0]);
                 setCurrentStudentIdNumber(nextStudentIdNumber);
                 localStorage.setItem('currentStudentId', fullStudentId);
-                console.log("Id::::", localStorage.getItem("currentStudentId"))
-                setStudentDetails({
-                    studentId: `${fullStudentId}` || localStorage.getitem("currentStudentId") || 'Set Student Id In Master',
+
+                // Reset only specific fields, not the entire studentDetails object
+                setStudentDetails(prevStudentDetails => ({
+                    ...prevStudentDetails,
+                    studentId: `${fullStudentId}` || localStorage.getItem("currentStudentId") || 'Set Student Id In Master',
                     firstName: '',
                     lastName: '',
                     fatherName: '',
@@ -177,36 +216,12 @@ const AddStudent = () => {
                     address: '',
                     contactNumber1: '',
                     contactNumber2: '',
-                    gender: '',
-                    maritalStatus: '',
-                    sslcPercentage: '',
-                    qualification: '',
-                    hscPercentage: '',
-                    diplomaPercentage: '',
-                    ugCollegeName: '',
-                    ugSpecialization: '',
-                    ugCgpa: '',
-                    ugYearOfPassing: '',
-                    pgCollegeName: '',
-                    pgSpecialization: '',
-                    pgCgpa: '',
-                    pgYearOfPassing: '',
-                    phdCollegeName: '',
-                    phdSpecialization: '',
-                    phdCgpa: '',
-                    phdYearOfPassing: '',
                     workExperience: '',
-                    course: '',
-                    totalAmount: 0,
-                    paidAmount: 0,
-                    remainingAmount: 0,
-                    doj: "",
-                    mentor: "",
+                    mentor: '',
                     studentStatus: '',
                     studentImage: null,
                     comments: ''
-                })
-
+                }));
             } else {
                 setErrorMessage("Unexpected response received");
                 if (response && response.error) {
@@ -214,7 +229,6 @@ const AddStudent = () => {
                 } else {
                     setErrorMessage("Unexpected Error Occurred!!!");
                 }
-
                 setErrorSnackbarOpen(true);
                 setSnackbarOpen(false);
                 setSuccessMessage(false);
@@ -226,6 +240,98 @@ const AddStudent = () => {
             setSuccessMessage(false);
         }
     };
+
+    // const handleStudentSubmit = async () => {
+    //     try {
+    //         // Check if contactNumber1 already exists
+    //         const contactNumberExists = studentDetailsFetch.some(student => student.contactNumber1 === studentDetails.contactNumber1);
+    //         console.log(studentDetailsFetch, "getch");
+    //         if (contactNumberExists) {
+    //             alert("Contact number already exists in the database.");
+    //             return;
+    //         }
+
+    //         const formData = new FormData();
+
+    //         for (const key in studentDetails) {
+    //             formData.append(key, studentDetails[key]);
+    //         }
+    //         const resultAction = await dispatch(createStudent(formData));
+    //         const response = await resultAction.payload;
+
+    //         if (response && response._id) {
+    //             setSnackbarOpen(true);
+    //             setErrorSnackbarOpen(false);
+    //             setSuccessMessage(true);
+    //             setErrorMessage("");
+
+    //             // Update student id
+    //             const nextStudentIdNumber = currentStudentIdNumber + 1;
+    //             const fullStudentId = `${currentStudentIdText}-${nextStudentIdNumber}`;
+    //             setCurrentStudentIdText(fullStudentId.split("-")[0]);
+    //             setCurrentStudentIdNumber(nextStudentIdNumber);
+    //             localStorage.setItem('currentStudentId', fullStudentId);
+    //             console.log("Id::::", localStorage.getItem("currentStudentId"))
+    //             setStudentDetails({
+    //                 studentId: `${fullStudentId}` || localStorage.getitem("currentStudentId") || 'Set Student Id In Master',
+    //                 firstName: '',
+    //                 lastName: '',
+    //                 fatherName: '',
+    //                 motherName: '',
+    //                 dateOfBirth: '',
+    //                 emailId: '',
+    //                 address: '',
+    //                 contactNumber1: '',
+    //                 contactNumber2: '',
+    //                 gender: '',
+    //                 maritalStatus: '',
+    //                 sslcPercentage: '',
+    //                 qualification: '',
+    //                 hscPercentage: '',
+    //                 diplomaPercentage: '',
+    //                 ugCollegeName: '',
+    //                 ugSpecialization: '',
+    //                 ugCgpa: '',
+    //                 ugYearOfPassing: '',
+    //                 pgCollegeName: '',
+    //                 pgSpecialization: '',
+    //                 pgCgpa: '',
+    //                 pgYearOfPassing: '',
+    //                 phdCollegeName: '',
+    //                 phdSpecialization: '',
+    //                 phdCgpa: '',
+    //                 phdYearOfPassing: '',
+    //                 workExperience: '',
+    //                 course: '',
+    //                 totalAmount: 0,
+    //                 paidAmount: 0,
+    //                 remainingAmount: 0,
+    //                 doj: "",
+    //                 mentor: "",
+    //                 studentStatus: '',
+    //                 studentImage: null,
+    //                 comments: ''
+    //             })
+
+    //         } else {
+    //             setErrorMessage("Unexpected response received");
+    //             if (response && response.error) {
+    //                 setErrorMessage("Error occurred!!! " + response.error);
+    //             } else {
+    //                 setErrorMessage("Unexpected Error Occurred!!!");
+    //             }
+
+    //             setErrorSnackbarOpen(true);
+    //             setSnackbarOpen(false);
+    //             setSuccessMessage(false);
+    //         }
+    //     } catch (error) {
+    //         setErrorMessage("Error occurred!!! " + error.message);
+    //         setErrorSnackbarOpen(true);
+    //         setSnackbarOpen(false);
+    //         setSuccessMessage(false);
+    //     }
+    // };
 
     const handleQualificationChange = (e) => {
         const selectedQualification = e.target.value;

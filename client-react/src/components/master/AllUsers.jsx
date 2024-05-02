@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { getStaffDetails, updateStaffDetail, deleteStaffDetail } from "../features/staffSlice";
 import WarningModal from './WarningModal';
 import warningSign from "./assets/exclamation-mark.png";
+import { selectUser } from "../features/loginUserSlice";
 
 
 import axios from 'axios';
@@ -69,6 +70,7 @@ const AllUsers = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [users, setUsers] = useState(null);
     const [fieldToDelete, setFieldToDelete] = useState(null);
+    const currentUser = useSelector(selectUser);
 
     useEffect(() => {
         dispatch(getStaffDetails());
@@ -153,6 +155,10 @@ const AllUsers = () => {
         try {
             if (selectedAdmin && selectedAdmin._id) {
                 // console.log("Selected Admin:", selectedAdmin, selectedUser);
+                console.log(currentUser, "Current");
+                if (selectedAdmin.userName === currentUser.userName) {
+                    currentUser._id = selectedUser[0]._id;
+                }
                 if (selectedUser && selectedUser.length > 0 && selectedUser[0]._id) {
                     const updatedData = {
                         userName: selectedAdmin.userName,
@@ -161,6 +167,7 @@ const AllUsers = () => {
                         staffDoj: selectedAdmin.staffDoj
                     };
                     const updatedAdmin = {
+                        _id: selectedAdmin._id,
                         userName: selectedAdmin.userName,
                         password: selectedAdmin.password,
                     }
@@ -169,8 +176,10 @@ const AllUsers = () => {
                         dispatch(updateStaffDetail({ id: selectedAdmin._id, updatedData })),
                         axios.put(`http://localhost:8011/hrm/updateUser/${selectedUser[0]._id}`, updatedAdmin)
                     ]);
-                    localStorage.setItem("user", JSON.stringify({ ...updatedAdmin, userName: selectedAdmin.userName }));
-
+                    console.log("Id's", currentUser._id, selectedUser[0]._id);
+                    if (currentUser._id === selectedUser[0]._id) {
+                        localStorage.setItem("user", JSON.stringify({ ...updatedAdmin, userName: selectedAdmin.userName }));
+                    }
                     setIsEdit(false);
                     window.location.reload();
                 } else {

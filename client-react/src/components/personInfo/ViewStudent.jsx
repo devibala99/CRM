@@ -15,6 +15,7 @@ import EditStudentModal from './EditStudentModal';
 import WarningModal from '../master/WarningModal';
 import warningSign from "../master/assets/exclamation-mark.png";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { showEmployees } from '../features/employeesSlice';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import Pagination from '@mui/material/Pagination'
 const StyledTableHead = styled(TableHead)({
@@ -65,6 +66,8 @@ const ViewStudent = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [displayModalOpen, setDisplayModalOpen] = useState(false);
+    const employees = useSelector(state => state.employees.employeeEntries);
+
     const handleChangePage = (event, value) => {
         setPage(value);
     };
@@ -89,7 +92,10 @@ const ViewStudent = () => {
     const handleFilterMenuClose = () => {
         setFilterMenuAnchor(null);
     };
-
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(showEmployees());
+    }, [dispatch]);
     useEffect(() => {
         const filtered = Array.isArray(students) ? students.filter(student => {
             if (filterOption === 'All') {
@@ -134,7 +140,7 @@ const ViewStudent = () => {
             dispatch(showStudents(updatedStudents));
         }
     };
-    const dispatch = useDispatch();
+
 
     // Pagination
     const studentsPerPage = 10;

@@ -2,7 +2,7 @@ const User = require("../modals/userModal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-let path = require('path');
+// const { createStaff } = require('./staffController');
 
 const registerUser = async (req, res) => {
     const { userName, password } = req.body;
@@ -51,25 +51,77 @@ const checkUserExistance = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 }
-// login user
 const loginUser = async (req, res) => {
     const { userName, password } = req.body;
-    const user = await User.findOne({ userName }).maxTimeMS(30000);
 
-    // console.log(userName, password, "login")
+    try {
+        let user;
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-        return res.status(200).json({
-            _id: user._id,
-            userName: user.userName,
-            token: generateToken(user._id),
-            status: "Login Successfull"
-        })
+        // Check if the provided credentials match the default admin credentials
+        if (userName === 'admin' && password === '123456') {
+            // If the default admin credentials are used, check if "admin" user exists
+            user = await User.findOne({ userName: 'admin' }).maxTimeMS(30000);
+
+            if (!user) {
+                // If "admin" user doesn't exist, register as admin
+                const hashedPassword = await bcrypt.hash(password, 8);
+                user = await User.create({ userName: 'admin', password: hashedPassword });
+            }
+        } else {
+            // If not the default admin credentials, proceed with regular user authentication
+            user = await User.findOne({ userName }).maxTimeMS(30000);
+        }
+
+        // Check if a user was found and the password matches (or if using default admin credentials)
+        if (user && ((userName === 'admin' && password === '123456') || await bcrypt.compare(password, user.password))) {
+            return res.status(200).json({
+                _id: user._id,
+                userName: user.userName,
+                token: generateToken(user._id),
+                status: "Login Successful"
+            });
+        } else {
+            return res.status(401).json({ msg: "Invalid User Data" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Internal Server Error" });
     }
-    else {
-        return res.status(401).json({ msg: "Invalid User Data" });
-    }
-}
+};
+
+// const loginUser = async (req, res) => {
+//     const { userName, password } = req.body;
+
+//     try {
+//         let user;
+
+//         // Check if the provided credentials match the default admin credentials
+//         if (userName === 'admin' && password === '123456') {
+//             // If the default admin credentials are used, register the user as a regular user
+//             const hashedPassword = await bcrypt.hash(password, 8);
+//             user = await User.create({ userName, password: hashedPassword });
+//         } else {
+//             // If not the default admin credentials, proceed with regular user authentication
+//             user = await User.findOne({ userName }).maxTimeMS(30000);
+//         }
+
+//         // Check if a user was found and the password matches (or if using default admin credentials)
+//         if (user && ((userName === 'admin' && password === '123456') || await bcrypt.compare(password, user.password))) {
+//             return res.status(200).json({
+//                 _id: user._id,
+//                 userName: user.userName,
+//                 token: generateToken(user._id),
+//                 status: "Login Successful"
+//             });
+//         } else {
+//             return res.status(401).json({ msg: "Invalid User Data" });
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ msg: "Internal Server Error" });
+//     }
+// };
+
 
 const getMe = async (req, res) => {
     const { _id, userName } = await User.findById(req.user.id);

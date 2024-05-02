@@ -1,26 +1,48 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import { useDispatch } from "react-redux";
-import { createEmployee } from '../features/employeesSlice';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { showEmployees, createEmployee } from '../features/employeesSlice';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import SidebarBreadcrumbs from '../../navigationbar/SidebarBreadcrumbs';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { Link } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { createStaffDetail } from '../features/staffSlice';
+// import { createStaffDetail } from '../features/staffSlice';
 
 import "./addStudent.css"
 const AddEmployee = () => {
 
     const { employeeId: initialEmployeeId } = useParams();
+    const employees = useSelector(state => state.employees.employeeEntries);
     const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(showEmployees());
+    }, [dispatch]);
 
     // employee id from localstorage
-    const initialEmployeeIdLocal = localStorage.getItem("currentEmployeeId") || "Emp-10001";
-    // console.log(localStorage.getItem("currentEmployeeId"));
-    const initialEmployeeIdText = initialEmployeeIdLocal ? initialEmployeeIdLocal.split("-")[0] : initialEmployeeId.split("-")[0] || "EMP";
-    const initialEmployeeNumber = parseInt(initialEmployeeIdLocal ? initialEmployeeIdLocal.split("-")[1] : initialEmployeeIdLocal.split("-")[1]);
+    const [initialEmployeeIdLocal, setInitialEmployeeIdLocal] = useState(() => {
+        const localStorageValue = localStorage.getItem("currentEmployeeId");
+        return localStorageValue;
+    });
+
+    // useEffect to update initialEmployeeIdLocal if necessary
+    useEffect(() => {
+        // If employees array is not empty, set initialEmployeeIdLocal to the last employee's ID
+        if (employees.length > 0) {
+            const lastEmployee = employees[employees.length - 1];
+            const lastEmployeeId = lastEmployee.employeeId;
+            setInitialEmployeeIdLocal(lastEmployeeId);
+        } else {
+            // If employees array is empty, fall back to the value from localStorage
+            const localStorageValue = localStorage.getItem("currentEmployeeId");
+            setInitialEmployeeIdLocal(localStorageValue);
+        }
+    }, [employees]);
+
+    const initialEmployeeIdText = initialEmployeeIdLocal ? initialEmployeeIdLocal.split("-")[0] : "EMP";
+    const initialEmployeeNumber = initialEmployeeIdLocal ? parseInt(initialEmployeeIdLocal.split("-")[1]) : 10001;
+
     const [currentEmployeeIdText, setCurrentEmployeeIdText] = useState(initialEmployeeIdText);
     const [currentEmployeeIdNumber, setCurrentEmployeeIdNumber] = useState(initialEmployeeNumber);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -81,7 +103,25 @@ const AddEmployee = () => {
         comments: '',
 
     });
-
+    useEffect(() => {
+        if (initialEmployeeIdLocal) {
+            const lastNumber = parseInt(initialEmployeeIdLocal.split("-")[1]);
+            const newNumber = lastNumber + 1;
+            const newEmployeeId = `EMP-${newNumber}`;
+            localStorage.setItem("currentEmployeeId", newEmployeeId);
+            setEmployeeData(prevData => ({
+                ...prevData,
+                employeeId: newEmployeeId
+            }));
+        } else {
+            // If initialEmployeeIdLocal is not available, fallback to localStorage
+            const localStorageValue = localStorage.getItem("currentEmployeeId");
+            setEmployeeData(prevData => ({
+                ...prevData,
+                employeeId: localStorageValue || "Set Employee Id In Master"
+            }));
+        }
+    }, [initialEmployeeIdLocal]);
     const handleCloseSnackbar = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -112,12 +152,21 @@ const AddEmployee = () => {
 
     const handleEmployeeSubmit = async (e) => {
         e.preventDefault();
+
         try {
+            // Check if there are employees in the database
+            if (employees.length > 0) {
+                const contactNumberExists = employees.some(employee => employee.contactNumber1 === employeeData.contactNumber1);
+                if (contactNumberExists) {
+                    alert("Contact number already exists in the database. Please choose a different one.");
+                    return; // Stop further execution if contact number exists
+                }
+            }
+
             const formData = new FormData();
             for (const key in employeeData) {
                 formData.append(key, employeeData[key]);
             }
-            console.log(formData, "form");
 
             const resultAction = await dispatch(createEmployee(formData));
             const response = await resultAction.payload;
@@ -128,24 +177,26 @@ const AddEmployee = () => {
                 setSuccessMessage(true);
                 setErrorMessage("");
 
-                // update student id
+                // Update employee id
                 const nextEmployeeIdNumber = currentEmployeeIdNumber + 1;
-                console.log(typeof (currentEmployeeIdNumber));
                 const fullEmployeeId = `${currentEmployeeIdText}-${nextEmployeeIdNumber}`;
                 setCurrentEmployeeIdText(fullEmployeeId.split("-")[0]);
                 setCurrentEmployeeIdNumber(nextEmployeeIdNumber);
                 localStorage.setItem('currentEmployeeId', fullEmployeeId);
 
-                if (employeeData.isStaff === "Yes") {
-                    const updateDetails = {
-                        staffName: employeeData.firstName + " " + employeeData.lastName,
-                        staffDoj: employeeData.staffDoj,
-                    }
-                    dispatch(createStaffDetail(updateDetails));
-                }
+                // If employee is marked as staff, create staff detail entry
+                // if (employeeData.isStaff === "Yes") {
+                //     const updateDetails = {
+                //         staffName: `${employeeData.firstName} ${employeeData.lastName}`,
+                //         staffDoj: employeeData.staffDoj,
+                //     };
+                //     dispatch(createStaffDetail(updateDetails));
+                // }
 
-                setEmployeeData({
-                    employeeId: `${currentEmployeeIdText}-${currentEmployeeIdNumber}` || localStorage.getItem("currentEmployeeId") || "Set Employee Id In Master",
+                // Reset form fields after successful submission
+                setEmployeeData(prevEmployeeData => ({
+                    ...prevEmployeeData,
+                    employeeId: fullEmployeeId || localStorage.getItem("currentEmployeeId") || "Set Employee Id In Master",
                     firstName: "",
                     lastName: "",
                     fatherName: '',
@@ -187,13 +238,13 @@ const AddEmployee = () => {
                     employeeImage: null,
                     employeeType: '',
                     comments: '',
-                })
+                }));
             } else {
                 setErrorMessage("Unexpected response received");
                 if (response && response.error) {
                     setErrorMessage("Error occurred!!! " + response.error);
                 } else {
-                    setErrorMessage("Unexpected Error Occured, Email Should be Unique, Select Radio Buttons Properlly and Enter All The Fields!!!");
+                    setErrorMessage("Unexpected Error Occurred, Email Should be Unique, Select Radio Buttons Properly and Enter All The Fields!!!");
                 }
                 setErrorSnackbarOpen(true);
                 setSnackbarOpen(false);
@@ -205,8 +256,8 @@ const AddEmployee = () => {
             setSnackbarOpen(false);
             setSuccessMessage(false);
         }
-
     };
+
     const handleQualificationChange = (e) => {
         const selectedQualification = e.target.value;
         setSelectedQualification(selectedQualification);
@@ -330,11 +381,11 @@ const AddEmployee = () => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="contactNumber1">Contact Number: <span style={{ color: "Red" }}>*</span></label>
-                        <input type="tel" id="contactNumber1" name="contactNumber1" pattern="[0-9]{10}" value={employeeData.contactNumber1} onChange={handleInputChange} required />
+                        <input type="text" id="contactNumber1" name="contactNumber1" minLength={10} maxLength={10} value={employeeData.contactNumber1} onChange={handleInputChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="contactNumber2">Alternate Number:</label>
-                        <input type="tel" id="contactNumber2" name="contactNumber2" pattern="[0-9]{10}" value={employeeData.contactNumber2} onChange={handleInputChange} />
+                        <input type="text" id="contactNumber2" name="contactNumber2" minLength={10} maxLength={10} value={employeeData.contactNumber2} onChange={handleInputChange} />
                     </div>
                     <div className="form-group">
                         <label>Gender: <span style={{ color: "Red" }}>*</span></label>
